@@ -1,0 +1,28 @@
+---
+vm_name: tor01
+vm_disk: cumulus_linux-3.6.2-vx-amd64.qcow2
+console_port: 2001
+
+connections:
+  - type: udp
+    s_port: 10101
+    d_port: 10201
+
+  - type: udp
+    s_port: 10102
+    d_port: 10601
+
+  - type: udp
+    s_port: 10103
+    d_port: 10000
+
+  - type: udp
+    s_port: 10104
+    d_port: 10000
+
+  - type: udp
+    s_port: 10105
+    d_port: 10000
+
+netlab_mgmt_source_bridge: br0
+mac_address: 52:54:00:aa:aa:01
