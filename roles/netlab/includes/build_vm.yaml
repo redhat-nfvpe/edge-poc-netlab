@@ -1,13 +1,13 @@
 ---
 - name: create image container on remote server
   file:
-    path: "{{ netlab_virt_images_path }}/{{ node.ansible_network_os }}"
+    path: "{{ netlab_virt_images_path }}/{{ node.vm_name }}"
     state: directory
 
 - name: copy base image vm_disk to image container
   copy:
-    src: "{{ netlab_files_path }}/{{ node.ansible_network_os }}/{{ node.vm_disk }}"
-    dest: "{{ netlab_virt_images_path }}/{{ node.ansible_network_os }}/{{ node.vm_disk }}"
+    src: "{{ netlab_files_path }}/{{ node.vm_name }}/{{ node.vm_disk }}"
+    dest: "{{ netlab_virt_images_path }}/{{ node.vm_name }}/{{ node.vm_disk }}"
 
 - name: create virtual machine base folder
   file:
@@ -16,7 +16,7 @@
 
 - name: copy base image to virtual machine folder
   copy:
-    src: "{{ netlab_virt_images_path }}/{{ node.ansible_network_os }}/{{ node.vm_disk }}"
+    src: "{{ netlab_virt_images_path }}/{{ node.vm_name }}/{{ node.vm_disk }}"
     dest: "{{ netlab_virt_vm_path }}/{{ vm_name }}/{{ node.vm_disk }}"
     remote_src: yes
 
@@ -24,7 +24,7 @@
   virt:
     name: "{{ vm_name }}"
     command: define
-    xml: "{{ lookup('template', 'templates/{{ node.ansible_network_os }}/vm.xml.j2') }}"
+    xml: "{{ lookup('template', 'templates/{{ node.vm_name }}/vm.xml.j2') }}"
   when: vm_name not in running_vms.list_vms
 
 - name: start all virtual machines
