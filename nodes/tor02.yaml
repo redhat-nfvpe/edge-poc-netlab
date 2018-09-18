@@ -1,6 +1,7 @@
 ---
 vm_name: tor02
 vm_disk: cumulus_linux-3.6.2-vx-amd64.qcow2
+vm_type: tor
 console_port: 2002
 
 connections:
