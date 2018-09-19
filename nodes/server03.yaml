@@ -1,0 +1,16 @@
+---
+vm_name: server03
+vm_disk: empty_disk.qcow2
+vm_type: server
+console_port: 2005
+
+connections:
+  - type: udp
+    s_port: 10031
+    d_port: 11003
+
+  - type: udp
+    s_port: 10032
+    d_port: 12003
+
+netlab_mgmt_source_bridge: br0

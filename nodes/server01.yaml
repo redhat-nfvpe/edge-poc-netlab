@@ -1,0 +1,16 @@
+---
+vm_name: server01
+vm_disk: CentOS-7-x86_64-GenericCloud-1808.qcow2
+vm_type: server
+console_port: 2003
+
+connections:
+  - type: udp
+    s_port: 10011
+    d_port: 11001
+
+  - type: udp
+    s_port: 10012
+    d_port: 12001
+
+netlab_mgmt_source_bridge: br0

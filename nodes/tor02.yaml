@@ -6,24 +6,19 @@ console_port: 2002
 
 connections:
   - type: udp
-    s_port: 10201
-    d_port: 10101
+    s_port: 12001
+    d_port: 10012
 
   - type: udp
-    s_port: 10202
-    d_port: 10501
+    s_port: 12002
+    d_port: 10022
 
   - type: udp
-    s_port: 10203
-    d_port: 10000
+    s_port: 12003
+    d_port: 10023
 
   - type: udp
-    s_port: 10204
-    d_port: 10000
-
-  - type: udp
-    s_port: 10205
-    d_port: 10000
+    s_port: 12004
+    d_port: 10024
 
 netlab_mgmt_source_bridge: br0
-mac_address: 52:54:00:aa:aa:02

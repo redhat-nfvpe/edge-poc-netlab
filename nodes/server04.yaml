@@ -1,0 +1,17 @@
+---
+vm_name: server04
+vm_disk: empty_disk.qcow2
+vm_type: server
+console_port: 2006
+
+connections:
+  - type: udp
+    s_port: 10041
+    d_port: 11004
+
+  - type: udp
+    s_port: 10042
+    d_port: 12004
+
+netlab_mgmt_source_bridge: br0
+
