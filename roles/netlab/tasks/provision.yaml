@@ -1,4 +1,5 @@
----
-- name: provision base host using host provider
-  include_tasks: "host_providers/{{ netlab_host_provider }}/provision.yaml"
-  when: netlab_host_provider != 'baremetal'
+# Use the following syntax to add a new cloud provider
+#---
+#- name: provision base host using host provider
+#  include_tasks: "host_providers/{{ netlab_host_provider }}/provision.yaml"
+#  when: netlab_host_provider != 'baremetal'
