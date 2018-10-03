@@ -14,7 +14,7 @@
 
 
 - name: shutdown the cloud virtual machines
-  hosts: localhost
+  hosts: provision_host
   gather_facts: no
 
   tasks:
