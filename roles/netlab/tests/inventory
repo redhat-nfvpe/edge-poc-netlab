@@ -1,2 +1,6 @@
+[hosts]
+localhost
+
+[provision_host]
 localhost
 
