@@ -1,6 +1,6 @@
 ---
 vm_name: server01
-vm_disk: rhcos-qemu.qcow2.gz
+vm_disk: rhcos-qemu.qcow2
 vm_type: server
 console_port: 2003
 
