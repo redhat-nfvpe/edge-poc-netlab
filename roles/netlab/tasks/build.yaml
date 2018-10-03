@@ -12,7 +12,7 @@
     patterns: "*.yaml"
   register: definitions
   delegate_to: "{{ item }}"
-  with_items: groups.provision_host
+  with_items: "{{ groups.provision_host }}"
   become: no
 
 - name: create nodes fact
