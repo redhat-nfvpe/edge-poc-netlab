@@ -31,4 +31,4 @@
   virt:
     command: start
     name: "{{ vm_name }}"
-  when: vm_name not in running_vms.list_vms
+  when: vm_name not in running_vms.list_vms and node.start|bool == True

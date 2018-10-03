@@ -22,3 +22,4 @@ connections:
     d_port: 10024
 
 netlab_mgmt_source_bridge: br0
+start: true
