@@ -1,6 +1,6 @@
 ---
 vm_name: server02
-vm_disk: CentOS-7-x86_64-GenericCloud-1808.qcow2
+vm_disk: rhcos-qemu.qcow2
 vm_type: server
 console_port: 2004
 
