@@ -11,7 +11,8 @@
     paths: "{{ netlab_nodes_path }}"
     patterns: "*.yaml"
   register: definitions
-  delegate_to: localhost
+  delegate_to: $item
+  with_items: ${groups.provision_host}
   become: no
 
 - name: create nodes fact

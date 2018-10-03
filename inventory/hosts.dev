@@ -4,5 +4,11 @@ ansible_python_interpreter = python
 [hosts]
 localhost
 
+[provision_host]
+localhost
+
 [hosts:vars]
+netlab_host_provider = baremetal
+
+[provision_host:vars]
 netlab_host_provider = baremetal

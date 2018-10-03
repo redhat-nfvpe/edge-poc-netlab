@@ -1,6 +1,6 @@
 ---
 - name: provision the cloud virtual machine host
-  hosts: localhost
+  hosts: provision_host
   gather_facts: yes
 
   tasks:
