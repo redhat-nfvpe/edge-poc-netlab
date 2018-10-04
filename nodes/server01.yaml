@@ -16,3 +16,7 @@ connections:
 netlab_mgmt_source_bridge: br0
 start: true
 ignition_name: bootstrap.ign
+ipmi:
+  username: admin
+  password: password
+  port: 6230

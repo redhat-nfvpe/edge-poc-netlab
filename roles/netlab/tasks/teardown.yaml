@@ -42,3 +42,13 @@
     path: "{{ netlab_virt_base_path }}"
     state: absent
   when: netlab_clean_virt
+
+- name: collec vbmc output
+  command: vbmc list -f csv -c 'Domain name'
+  register: vbmc_list
+
+- name: stop vbmc
+  command: vbmc stop {{ item }}
+  when: item != 'Domain name'
+  with_items: "{{ vbmc_list.stdout_lines }}"
+  ignore_errors: true
