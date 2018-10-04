@@ -4,6 +4,21 @@
   gather_facts: yes
 
   tasks:
+    - name: install dependencies
+      yum:
+        name:
+          - python-pip
+          - python-devel
+        state: latest
+
+    - name: install virtualbmc
+      pip:
+        name: virtualbmc
+
+    - name: build and start cloud virtual machine instances
+      import_role:
+        name: netlab
+        tasks_from: provision
     - name: build and start cloud virtual machine instances
       import_role:
         name: netlab
