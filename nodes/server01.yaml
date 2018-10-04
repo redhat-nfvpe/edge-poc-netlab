@@ -1,7 +1,7 @@
 ---
 vm_name: server01
 vm_disk: rhcos-qemu.qcow2
-vm_type: server
+vm_type: coreos
 console_port: 2003
 
 connections:
@@ -15,3 +15,4 @@ connections:
 
 netlab_mgmt_source_bridge: br0
 start: true
+ignition_name: bootstrap.ign

@@ -1,7 +1,7 @@
 ---
 vm_name: server02
 vm_disk: empty_disk.qcow2
-vm_type: server
+vm_type: coreos
 console_port: 2004
 
 connections:
@@ -15,3 +15,4 @@ connections:
 
 netlab_mgmt_source_bridge: br0
 start: false
+ignition_name: master-0.ign
