@@ -16,3 +16,8 @@ connections:
 netlab_mgmt_source_bridge: br0
 start: false
 ignition_name: master-0.ign
+
+ipmi:
+  username: admin
+  password: password
+  port: 6231
