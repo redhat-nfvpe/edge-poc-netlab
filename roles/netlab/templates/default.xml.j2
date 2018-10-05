@@ -1,7 +1,17 @@
 <network>
   <name>default</name>
-  <forward mode='route'> </forward>
+  <forward mode='nat'> </forward>
   <bridge name='br0' stp='on' delay='0'/>
+  <domain name='{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' />
+  <dns>
+    <host ip='{{ netlab_libvirt_default_ip_bootstrap }}'>
+      <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-api</hostname>
+    </host>
+    <host ip='{{ netlab_libvirt_default_ip_master0 }}'>
+      <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-master-0</hostname>
+      <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-etcd-0</hostname>
+    </host>
+  </dns>
   <ip address='{{ netlab_libvirt_default_dhcp_address }}' netmask='{{ netlab_libvirt_default_dhcp_mask }}'>
     <dhcp>
       <range start='{{ netlab_libvirt_default_dhcp_start }}' end='{{ netlab_libvirt_default_dhcp_end }}'/>
