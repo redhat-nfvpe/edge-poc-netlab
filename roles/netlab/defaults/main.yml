@@ -40,6 +40,11 @@ netlab_libvirt_default_dhcp_mask: 255.255.255.0
 netlab_libvirt_default_dhcp_start: 192.168.10.2
 netlab_libvirt_default_dhcp_end: 192.168.10.254
 
+netlab_libvirt_default_ip_bootstrap: 192.168.10.2
+netlab_libvirt_default_ip_master0: 192.168.10.3
+netlab_libvirt_default_ip_master1: 192.168.10.4
+netlab_libvirt_default_ip_master2: 192.168.10.5
+
 #netlab_libvirt_default2_dhcp_address: 192.168.20.1
 #netlab_libvirt_default2_dhcp_mask: 255.255.255.0
 #netlab_libvirt_default2_dhcp_start: 192.168.20.2

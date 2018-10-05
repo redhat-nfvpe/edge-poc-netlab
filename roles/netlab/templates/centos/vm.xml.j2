@@ -40,6 +40,7 @@
     {% endif %}
 
     <interface type='bridge'>
+      <mac address='{{ node.mac_address }}'/>
       <source bridge='br0'/>
       <model type='virtio'/>
     </interface>

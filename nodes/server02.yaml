@@ -14,6 +14,7 @@ connections:
     d_port: 12002
 
 netlab_mgmt_source_bridge: br0
+mac_address: 52:54:00:cc:cc:02
 start: false
 ignition_name: master-0.ign
 
