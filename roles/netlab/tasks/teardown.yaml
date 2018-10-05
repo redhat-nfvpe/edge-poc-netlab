@@ -52,3 +52,9 @@
   when: item != 'Domain name'
   with_items: "{{ vbmc_list.stdout_lines }}"
   ignore_errors: true
+
+- name: delete vbmc
+  command: vbmc delete {{ item }}
+  when: item != 'Domain name'
+  with_items: "{{ vbmc_list.stdout_lines }}"
+  ignore_errors: true
