@@ -11,6 +11,7 @@
       <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-master-0</hostname>
       <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-api</hostname>
       <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-etcd-0</hostname>
+      <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}</hostname>
     </host>
   </dns>
   <ip address='{{ netlab_libvirt_default_dhcp_address }}' netmask='{{ netlab_libvirt_default_dhcp_mask }}'>
