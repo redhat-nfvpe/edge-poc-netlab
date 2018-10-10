@@ -12,3 +12,12 @@ netlab_host_provider = baremetal
 
 [provision_host:vars]
 netlab_host_provider = baremetal
+
+[cluster_hosts]
+192.168.126.2 ansible_user=core
+192.168.126.3
+192.168.126.4
+192.168.126.5
+
+[bootstrap_host]
+192.168.126.2 ansible_user=core

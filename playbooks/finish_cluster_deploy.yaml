@@ -1,0 +1,40 @@
+---
+- name: Copy cluster credentials locally
+  hosts: bootstrap_host
+  gather_facts: yes
+
+  tasks:
+    - name: wait for host to come up
+      wait_for_connection:
+        #delay: 60
+        timeout: 3600
+
+    - name: wait until credentials file is populated
+      wait_for:
+        path: /var/opt/tectonic/auth/kubeconfig
+
+    - name: copy credential of the cluster locally
+      fetch:
+        src: /var/opt/tectonic/auth/kubeconfig
+        dest: "{{ lookup('env', 'WORKSPACE') }}/"
+        flat: true
+      become: true
+
+- name: Operate on cluster
+  hosts: provision_host
+  gather_facts: yes
+
+  tasks:
+    - name: Wait for master node to join
+      shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl get nodes --no-headers | grep 'master' | grep 'Ready' | wc -l
+      register: masters_result
+      until: masters_result.stdout|int > 0
+
+    - name: Remove taint from master
+      shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl taint nodes --all node-role.kubernetes.io/master:NoSchedule-
+      when: masters_result.stdout|int > 0
+
+    - name: Remove bootstrap vm
+      virt:
+        name: "server01"
+        state: destroyed
