@@ -6,11 +6,13 @@
   <vcpu placement='static'>2</vcpu>
 
   <resource>
+
     <partition>/machine</partition>
   </resource>
 
   <os>
     <type arch='x86_64' machine='pc'>hvm</type>
+    <boot dev='network' />
     <boot dev='hd'/>
   </os>
 
