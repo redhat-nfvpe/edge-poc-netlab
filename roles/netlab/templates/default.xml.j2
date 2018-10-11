@@ -21,6 +21,7 @@
       <host mac='52:54:00:cc:cc:02' ip='{{ netlab_libvirt_default_ip_master0 }}' />
       <host mac='52:54:00:cc:cc:03' ip='{{ netlab_libvirt_default_ip_master1 }}' />
       <host mac='52:54:00:cc:cc:04' ip='{{ netlab_libvirt_default_ip_master2 }}' />
+      <bootp file='bootstrap.ipxe' server='{{ netlab_libvirt_default_dhcp_adress }}' />
     </dhcp>
   </ip>
 </network>
