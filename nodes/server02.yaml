@@ -1,6 +1,6 @@
 ---
 vm_name: server02
-vm_disk: empty_disk.qcow2
+vm_disk: rhcos-qemu.qcow2
 vm_type: coreos
 console_port: 2004
 
