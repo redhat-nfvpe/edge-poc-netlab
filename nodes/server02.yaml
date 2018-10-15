@@ -4,15 +4,6 @@ vm_disk: rhcos-qemu.qcow2
 vm_type: coreos
 console_port: 2004
 
-connections:
-  - type: udp
-    s_port: 10021
-    d_port: 11002
-
-  - type: udp
-    s_port: 10022
-    d_port: 12002
-
 netlab_mgmt_source_bridge: br0
 mac_address: 52:54:00:cc:cc:02
 start: true
