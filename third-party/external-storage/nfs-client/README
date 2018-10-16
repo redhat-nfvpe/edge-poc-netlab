@@ -1,0 +1,11 @@
+How to execute
+==============
+kubectl create -f rbac.yaml
+kubectl create -f deployment.yaml
+kubectl create -f class.yaml
+
+kubectl create -f test-claim.yaml
+kubectl create -f test-pod.yaml
+
+kubectl delete -f test-pod.yaml
+kubectl delete -f test-claim.yaml
