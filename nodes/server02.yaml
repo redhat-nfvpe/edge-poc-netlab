@@ -6,7 +6,7 @@ console_port: 2004
 
 netlab_mgmt_source_bridge: br0
 mac_address: 52:54:00:cc:cc:02
-start: true
+start: false
 ignition_name: master-0.ign
 
 ipmi:
