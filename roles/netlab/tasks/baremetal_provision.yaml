@@ -1,0 +1,22 @@
+---
+- name: Disable selinux on master
+  selinux:
+      state: disabled
+
+- name: Patch restricted security context
+  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl patch scc restricted -p '{{ item }}'
+  with_items:
+    - '{"allowHostDirVolumePlugin": true}'
+    - '{"allowHostNetwork": true}'
+    - '{"allowHostPorts": true}'
+    - '{"allowPrivilegedContainer": true}'
+    - '{"allowedCapabilities": ["DAC_READ_SEARCH", "SYS_RESOURCE"]}'
+    - '{"dropCapabilities": ["KILL", "MKNOD"]}'
+    - '{"runAsUser": {"type": "RunAsAny" }}'
+    - '{"volumes": ["configMap", "downwardAPI", "emptyDir", "hostPath", "persistentVolumeClaim", "projected", "secret", "nfs"]}'
+
+- name: Label master nodes
+  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl testcluster-api {{ item }}
+  with_items:
+    - "app=nfs-provisioner"
+    - "role=master"

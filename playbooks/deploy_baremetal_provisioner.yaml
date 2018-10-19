@@ -1,0 +1,11 @@
+---
+
+- name: Adjust master security
+  hosts: provision_host
+  gather_facts: yes
+
+  tasks:
+    - name: build and start the network virtual machines
+      import_role:
+        name: netlab
+        tasks_from: baremetal_provision
