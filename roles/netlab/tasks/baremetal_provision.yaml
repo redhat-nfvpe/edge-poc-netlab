@@ -21,3 +21,10 @@
     - "app=nfs-provisioner"
     - "role=master"
   ignore_errors: true
+
+- name: Deploy the NFS manifests
+  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'WORKSPACE') }}/edge-poc-netlab/third-party/external-storage/nfs-client/deploy/{{ item }}
+  with_items:
+    - rbac.yaml
+    - deployment.yaml
+    - class.yaml
