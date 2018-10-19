@@ -1,0 +1,6 @@
+How to execute
+==============
+kubectl create secret generic mysql-root-password --from-literal=password=password
+kubectl create -f cluster-with-volume.yaml
+kubectl get mysqlclusters -> see that there is a cluster named 'mysql' there
+kubectl run mysql-client --image=mysql:5.7 -it --rm --restart=Never     -- mysql -h <name_of_cluster> -uroot -ppassword -e 'SELECT 1'

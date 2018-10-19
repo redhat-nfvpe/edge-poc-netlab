@@ -1,0 +1,7 @@
+How to execute
+==============
+kubectl create -f rbac.yaml
+kubectl create -f role-binding-template.yaml
+kubectl create -f custom-resource-definitions.yaml
+kubectl create -f role-agent.yaml
+kubectl create -f mysql-deployment.yaml
