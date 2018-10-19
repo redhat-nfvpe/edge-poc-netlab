@@ -1,0 +1,4 @@
+How to deploy
+============
+kubectl apply -f rabbitmq_rbac.yaml
+kubectl apply -f rabbitmq_statefulsets.yaml
