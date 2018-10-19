@@ -36,3 +36,4 @@
   with_items:
     - rpc-bind
     - nfs
+    - dhcp

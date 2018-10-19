@@ -37,3 +37,10 @@
     - custom-resource-definitions.yaml
     - role-agent.yaml
     - mysql-deployment.yaml
+
+- name: Deploy the dhcp manifests
+  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'WORKSPACE') }}/edge-poc-netlab/third-party/dhcp/deploy/{{ item }}
+  with_items:
+    - configmap.yaml
+    - dhcp-service.yaml
+    - deployment.yaml
