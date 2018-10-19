@@ -1,5 +1,38 @@
-# Use the following syntax to add a new cloud provider
-#---
-#- name: provision base host using host provider
-#  include_tasks: "host_providers/{{ netlab_host_provider }}/provision.yaml"
-#  when: netlab_host_provider != 'baremetal'
+# Tasks to prepare the provisioning host
+---
+- name: Start nfs services
+  service:
+    name: {{ item }}
+    state: started
+    enabled: yes
+  with_items:
+    - rpcbind
+    - nfs-server
+
+- name: Create the directory to be shared by NFS and give permissions
+  file:
+    path: /var/nfs
+    owner: nfsnobody
+    group: nfsnobody
+    mode: 0755
+
+- name: Generate exports file
+  copy:
+    dest: /etc/exports
+    content: "/var/nfs *(rw,no_root_squash,sync)"
+
+- name: Restart nfs server to pick exports
+  service:
+    name: nfs-server
+    enabled: yes
+    state: restarted
+
+- name: Enable firewall rules
+  firewalld:
+    service: {{ item }}
+    permanent: true
+    state: enabled
+    immediate: true
+  with_items:
+    - rpcbind
+    - nfs

@@ -9,6 +9,7 @@
         name:
           - python-pip
           - python-devel
+          - nfs-utils
         state: latest
 
     - name: install virtualbmc
@@ -19,11 +20,6 @@
       import_role:
         name: netlab
         tasks_from: provision
-    - name: build and start cloud virtual machine instances
-      import_role:
-        name: netlab
-        tasks_from: provision
-
 
 - name: provision the virtual machines
   hosts: hosts
