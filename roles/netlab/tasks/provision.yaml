@@ -2,7 +2,7 @@
 ---
 - name: Start nfs services
   service:
-    name: {{ item }}
+    name: "{{ item }}"
     state: started
     enabled: yes
   with_items:
@@ -29,10 +29,10 @@
 
 - name: Enable firewall rules
   firewalld:
-    service: {{ item }}
+    service: "{{ item }}"
     permanent: true
     state: enabled
     immediate: true
   with_items:
-    - rpcbind
+    - rpc-bind
     - nfs

@@ -2,6 +2,7 @@
 - name: provision the cloud virtual machine host
   hosts: provision_host
   gather_facts: yes
+  tags: provision_host
 
   tasks:
     - name: install dependencies
@@ -25,6 +26,7 @@
   hosts: hosts
   gather_facts: no
   become: yes
+  tags: provision_vms
 
   tasks:
     - name: build and start the network virtual machines
