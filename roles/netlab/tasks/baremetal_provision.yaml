@@ -20,3 +20,4 @@
   with_items:
     - "app=nfs-provisioner"
     - "role=master"
+  ignore_errors: true
