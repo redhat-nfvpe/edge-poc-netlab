@@ -28,3 +28,12 @@
     - rbac.yaml
     - deployment.yaml
     - class.yaml
+
+- name: Deploy the mysql manifests
+  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'WORKSPACE') }}/edge-poc-netlab/third-party/mysql-operator/deploy/{{ item }}
+  with_items:
+    - rbac.yaml
+    - role-binding-template.yaml
+    - custom-resource-definitions.yaml
+    - role-agent.yaml
+    - mysql-deployment.yaml
