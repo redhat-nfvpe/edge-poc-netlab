@@ -20,6 +20,7 @@
   with_items:
     - "app=nfs-provisioner"
     - "role=master"
+    - "openstack-control-plane=enabled"
   ignore_errors: true
 
 - name: Deploy the NFS manifests
