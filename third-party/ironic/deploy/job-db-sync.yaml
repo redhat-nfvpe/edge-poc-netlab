@@ -2,27 +2,27 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: ironic-api
+  name: ironic-db-sync
   namespace: default
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
-  name: queens-ironic-api
+  name: queens-ironic-db-sync
   namespace: default
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: queens-default-ironic-api
+  name: queens-default-ironic-db-sync
 subjects:
   - kind: ServiceAccount
-    name: ironic-api
+    name: ironic-db-sync
     namespace: default
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
-  name: queens-default-ironic-api
+  name: queens-default-ironic-db-sync
   namespace: default
 rules:
   - apiGroups:
@@ -39,43 +39,24 @@ rules:
       - jobs
       - pods
 ---
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: ironic-api
-  labels:
-    release_group: queens
-    application: ironic
-    component: api
+  name: "ironic-db-sync"
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      release_group: queens
-      application: ironic
-      component: api
-  revisionHistoryLimit: 3
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 1
-      maxSurge: 3
   template:
     metadata:
       labels:
         release_group: queens
         application: ironic
-        component: api
-      annotations:
-        configmap-bin-hash: "68c88253c96df66a791a8b298fe0499f228574d16879817fe06acbe66ebfbfe4"
-        configmap-etc-hash: "bdbb9530aa492186c6cafd49b2fa0c6a513cbb3d71e4c17a0b5e342debc10d9a"
+        component: db-sync
     spec:
-      serviceAccountName: ironic-api
+      serviceAccountName: ironic-db-sync
+      restartPolicy: OnFailure
       nodeSelector:
         openstack-control-plane: enabled
-      terminationGracePeriodSeconds: 30
-      initContainers:
         
+      initContainers:
         
         - name: init
           image: "quay.io/stackanetes/kubernetes-entrypoint:v0.3.1"
@@ -95,6 +76,8 @@ spec:
               value: eth0
             - name: PATH
               value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/
+            - name: DEPENDENCY_JOBS
+              value: "ironic-db-init"
             - name: DEPENDENCY_DAEMONSET
               value: ""
             - name: DEPENDENCY_CONTAINER
@@ -106,53 +89,39 @@ spec:
           command:
             - kubernetes-entrypoint
           volumeMounts:
-            null
+            []
+            
       containers:
-        - name: ironic-api
+        - name: "ironic-db-sync"
           image: "docker.io/openstackhelm/ironic:queens"
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: "IfNotPresent"
           
           command:
-            - /tmp/ironic-api.sh
-            - start
-          lifecycle:
-            preStop:
-              exec:
-                command:
-                  - /tmp/ironic-api.sh
-                  - stop
-          ports:
-            - containerPort: 6385
-          readinessProbe:
-            tcpSocket:
-              port: 6385
+            - /tmp/db-sync.sh
           volumeMounts:
-            - name: ironic-bin
-              mountPath: /tmp/ironic-api.sh
-              subPath: ironic-api.sh
+            - name: db-sync-sh
+              mountPath: /tmp/db-sync.sh
+              subPath: db-sync.sh
               readOnly: true
-            - name: ironic-etc
-              mountPath: /etc/ironic/ironic.conf
-              subPath: ironic.conf
+            - name: etc-service
+              mountPath: "/etc/ironic"
+            - name: db-sync-conf
+              mountPath: "/etc/ironic/ironic.conf"
+              subPath: "ironic.conf"
               readOnly: true
-            - name: ironic-etc
-              mountPath: /etc/ironic/logging.conf
-              subPath: logging.conf
+            - name: db-sync-conf
+              mountPath: "/etc/ironic/logging.conf"
+              subPath: "logging.conf"
               readOnly: true
-            - name: ironic-etc
-              mountPath: /etc/ironic/policy.json
-              subPath: policy.json
-              readOnly: true
-            - name: pod-shared
-              mountPath: /tmp/pod-shared
       volumes:
-        - name: ironic-bin
+        - name: db-sync-sh
           configMap:
-            name: ironic-bin
+            name: "ironic-bin"
             defaultMode: 0555
-        - name: ironic-etc
-          configMap:
-            name: ironic-etc
-            defaultMode: 0444
-        - name: pod-shared
+        - name: etc-service
           emptyDir: {}
+        - name: db-sync-conf
+          configMap:
+            name: "ironic-etc"
+            defaultMode: 0444
+
