@@ -46,7 +46,7 @@
     - deployment.yaml
 
 - name: Deploy the rabbitmq manifests
-  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'WORKSPACE') }}/edge-poc-netlab/third-party/rabbitmq/{{ item }}
+  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'WORKSPACE') }}/edge-poc-netlab/third-party/rabbitmq/deploy/{{ item }}
   with_items:
     - rabbitmq_rbac.yaml
     - rabbitmq_statefulsets.yaml
