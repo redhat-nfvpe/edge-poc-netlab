@@ -1,0 +1,119 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ironic-rabbit-init
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: queens-ironic-rabbit-init
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: queens-default-ironic-rabbit-init
+subjects:
+  - kind: ServiceAccount
+    name: ironic-rabbit-init
+    namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: queens-default-ironic-rabbit-init
+  namespace: default
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - batch
+      - apps
+    verbs:
+      - get
+      - list
+    resources:
+      - services
+      - endpoints
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "ironic-rabbit-init"
+spec:
+  template:
+    metadata:
+      labels:
+        release_group: queens
+        application: ironic
+        component: rabbit-init
+    spec:
+      serviceAccountName: "ironic-rabbit-init"
+      restartPolicy: OnFailure
+      nodeSelector:
+        openstack-control-plane: enabled
+        
+      initContainers:
+        
+        
+        - name: init
+          image: "quay.io/stackanetes/kubernetes-entrypoint:v0.3.1"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: INTERFACE_NAME
+              value: eth0
+            - name: PATH
+              value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/
+            - name: DEPENDENCY_DAEMONSET
+              value: ""
+            - name: DEPENDENCY_CONTAINER
+              value: ""
+            - name: DEPENDENCY_POD_JSON
+              value: ""
+            - name: COMMAND
+              value: "echo done"
+          command:
+            - kubernetes-entrypoint
+          volumeMounts:
+            []
+            
+      containers:
+        - name: rabbit-init
+          image: "docker.io/rabbitmq:3.7-management"
+          imagePullPolicy: "IfNotPresent"
+          
+          command:
+            - /tmp/rabbit-init.sh
+          volumeMounts:
+            - name: rabbit-init-sh
+              mountPath: /tmp/rabbit-init.sh
+              subPath: rabbit-init.sh
+              readOnly: true
+          env:
+          - name: RABBITMQ_ADMIN_CONNECTION
+            valueFrom:
+              secretKeyRef:
+                name: ironic-rabbitmq-admin
+                key: RABBITMQ_CONNECTION
+          - name: RABBITMQ_USER_CONNECTION
+            valueFrom:
+              secretKeyRef:
+                name: ironic-rabbitmq-user
+                key: RABBITMQ_CONNECTION
+      volumes:
+        - name: rabbit-init-sh
+          configMap:
+            name: "ironic-bin"
+            defaultMode: 0555
+
