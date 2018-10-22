@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "tftp-server"
+spec:
+  type: ClusterIP
+  ports:
+  - port: 69
+    name: tftp
+    targetPort: 69
+    protocol: UDP
+  selector:
+    app: "tftp-server"
