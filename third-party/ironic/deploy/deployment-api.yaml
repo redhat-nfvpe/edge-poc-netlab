@@ -1,0 +1,179 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ironic-api
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: RELEASE-NAME-ironic-api
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: RELEASE-NAME-default-ironic-api
+subjects:
+  - kind: ServiceAccount
+    name: ironic-api
+    namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: RELEASE-NAME-default-ironic-api
+  namespace: default
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - batch
+      - apps
+    verbs:
+      - get
+      - list
+    resources:
+      - services
+      - endpoints
+      - jobs
+      - pods
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ironic-api
+  labels:
+    release_group: RELEASE-NAME
+    application: ironic
+    component: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      release_group: RELEASE-NAME
+      application: ironic
+      component: api
+  revisionHistoryLimit: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 3
+  template:
+    metadata:
+      labels:
+        release_group: RELEASE-NAME
+        application: ironic
+        component: api
+      annotations:
+        configmap-bin-hash: "68c88253c96df66a791a8b298fe0499f228574d16879817fe06acbe66ebfbfe4"
+        configmap-etc-hash: "bdbb9530aa492186c6cafd49b2fa0c6a513cbb3d71e4c17a0b5e342debc10d9a"
+    spec:
+      serviceAccountName: ironic-api
+      affinity:
+        
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: release_group
+                  operator: In
+                  values:
+                    - RELEASE-NAME
+                - key: application
+                  operator: In
+                  values:
+                    - ironic
+                - key: component
+                  operator: In
+                  values:
+                    - api
+              topologyKey: kubernetes.io/hostname
+            weight: 10
+      nodeSelector:
+        openstack-control-plane: enabled
+      terminationGracePeriodSeconds: 30
+      initContainers:
+        
+        
+        - name: init
+          image: "quay.io/stackanetes/kubernetes-entrypoint:v0.3.1"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: INTERFACE_NAME
+              value: eth0
+            - name: PATH
+              value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/
+            - name: DEPENDENCY_DAEMONSET
+              value: ""
+            - name: DEPENDENCY_CONTAINER
+              value: ""
+            - name: DEPENDENCY_POD_JSON
+              value: ""
+            - name: COMMAND
+              value: "echo done"
+          command:
+            - kubernetes-entrypoint
+          volumeMounts:
+            null
+      containers:
+        - name: ironic-api
+          image: "docker.io/openstackhelm/ironic:queens"
+          imagePullPolicy: IfNotPresent
+          
+          command:
+            - /tmp/ironic-api.sh
+            - start
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /tmp/ironic-api.sh
+                  - stop
+          ports:
+            - containerPort: 6385
+          readinessProbe:
+            tcpSocket:
+              port: 6385
+          volumeMounts:
+            - name: ironic-bin
+              mountPath: /tmp/ironic-api.sh
+              subPath: ironic-api.sh
+              readOnly: true
+            - name: ironic-etc
+              mountPath: /etc/ironic/ironic.conf
+              subPath: ironic.conf
+              readOnly: true
+            - name: ironic-etc
+              mountPath: /etc/ironic/logging.conf
+              subPath: logging.conf
+              readOnly: true
+            - name: ironic-etc
+              mountPath: /etc/ironic/policy.json
+              subPath: policy.json
+              readOnly: true
+            - name: pod-shared
+              mountPath: /tmp/pod-shared
+      volumes:
+        - name: ironic-bin
+          configMap:
+            name: ironic-bin
+            defaultMode: 0555
+        - name: ironic-etc
+          configMap:
+            name: ironic-etc
+            defaultMode: 0444
+        - name: pod-shared
+          emptyDir: {}

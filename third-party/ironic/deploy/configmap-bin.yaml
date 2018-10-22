@@ -1,0 +1,358 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ironic-bin
+data:
+  db-init.py: |    
+    # Creates db and user for an OpenStack Service:
+    # Set ROOT_DB_CONNECTION and DB_CONNECTION environment variables to contain
+    # SQLAlchemy strings for the root connection to the database and the one you
+    # wish the service to use. Alternatively, you can use an ini formatted config
+    # at the location specified by OPENSTACK_CONFIG_FILE, and extract the string
+    # from the key OPENSTACK_CONFIG_DB_KEY, in the section specified by
+    # OPENSTACK_CONFIG_DB_SECTION.
+    
+    import os
+    import sys
+    import ConfigParser
+    import logging
+    from sqlalchemy import create_engine
+
+    # Create logger, console handler and formatter
+    logger = logging.getLogger('OpenStack-Helm DB Init')
+    logger.setLevel(logging.DEBUG)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+    # Set the formatter and add the handler
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+
+    # Get the connection string for the service db root user
+    if "ROOT_DB_CONNECTION" in os.environ:
+        db_connection = os.environ['ROOT_DB_CONNECTION']
+        logger.info('Got DB root connection')
+    else:
+        logger.critical('environment variable ROOT_DB_CONNECTION not set')
+        sys.exit(1)
+
+    # Get the connection string for the service db
+    if "OPENSTACK_CONFIG_FILE" in os.environ:
+        os_conf = os.environ['OPENSTACK_CONFIG_FILE']
+        if "OPENSTACK_CONFIG_DB_SECTION" in os.environ:
+            os_conf_section = os.environ['OPENSTACK_CONFIG_DB_SECTION']
+        else:
+            logger.critical('environment variable OPENSTACK_CONFIG_DB_SECTION not set')
+            sys.exit(1)
+        if "OPENSTACK_CONFIG_DB_KEY" in os.environ:
+            os_conf_key = os.environ['OPENSTACK_CONFIG_DB_KEY']
+        else:
+            logger.critical('environment variable OPENSTACK_CONFIG_DB_KEY not set')
+            sys.exit(1)
+        try:
+            config = ConfigParser.RawConfigParser()
+            logger.info("Using {0} as db config source".format(os_conf))
+            config.read(os_conf)
+            logger.info("Trying to load db config from {0}:{1}".format(
+                os_conf_section, os_conf_key))
+            user_db_conn = config.get(os_conf_section, os_conf_key)
+            logger.info("Got config from {0}".format(os_conf))
+        except:
+            logger.critical("Tried to load config from {0} but failed.".format(os_conf))
+            raise
+    elif "DB_CONNECTION" in os.environ:
+        user_db_conn = os.environ['DB_CONNECTION']
+        logger.info('Got config from DB_CONNECTION env var')
+    else:
+        logger.critical('Could not get db config, either from config file or env var')
+        sys.exit(1)
+
+    # Root DB engine
+    try:
+        root_engine_full = create_engine(db_connection)
+        root_user = root_engine_full.url.username
+        root_password = root_engine_full.url.password
+        drivername = root_engine_full.url.drivername
+        host = root_engine_full.url.host
+        port = root_engine_full.url.port
+        root_engine_url = ''.join([drivername, '://', root_user, ':', root_password, '@', host, ':', str (port)])
+        root_engine = create_engine(root_engine_url)
+        connection = root_engine.connect()
+        connection.close()
+        logger.info("Tested connection to DB @ {0}:{1} as {2}".format(
+            host, port, root_user))
+    except:
+        logger.critical('Could not connect to database as root user')
+        raise
+
+    # User DB engine
+    try:
+        user_engine = create_engine(user_db_conn)
+        # Get our user data out of the user_engine
+        database = user_engine.url.database
+        user = user_engine.url.username
+        password = user_engine.url.password
+        logger.info('Got user db config')
+    except:
+        logger.critical('Could not get user database config')
+        raise
+
+
+    # Create DB
+    try:
+        root_engine.execute("CREATE DATABASE IF NOT EXISTS {0}".format(database))
+        logger.info("Created database {0}".format(database))
+    except:
+        logger.critical("Could not create database {0}".format(database))
+        raise
+
+    # Create DB User
+    try:
+        root_engine.execute(
+            "GRANT ALL ON `{0}`.* TO \'{1}\'@\'%%\' IDENTIFIED BY \'{2}\'".format(
+                database, user, password))
+        logger.info("Created user {0} for {1}".format(user, database))
+    except:
+        logger.critical("Could not create user {0} for {1}".format(user, database))
+        raise
+
+    # Test connection
+    try:
+        connection = user_engine.connect()
+        connection.close()
+        logger.info("Tested connection to DB @ {0}:{1}/{2} as {3}".format(
+            host, port, database, user))
+    except:
+        logger.critical('Could not connect to database as user')
+        raise
+    
+    logger.info('Finished DB Management')
+  db-sync.sh: |
+    #!/bin/bash
+    set -ex
+    ironic-dbsync upgrade
+
+  ironic-api.sh: |
+    #!/bin/bash
+    set -ex
+    COMMAND="${@:-start}"
+    
+    function start () {
+      exec ironic-api \
+            --config-file /etc/ironic/ironic.conf
+    }
+    
+    function stop () {
+      kill -TERM 1
+    }
+    
+    $COMMAND
+
+  ironic-conductor.sh: |
+    #!/bin/bash
+    set -ex
+    
+    mkdir -p /var/lib/openstack-helm/ironic/images
+    mkdir -p /var/lib/openstack-helm/ironic/master_images
+    mkdir -p /var/lib/ironic_images
+    
+    exec ironic-conductor \
+          --config-file /etc/ironic/ironic.conf \
+          --config-file /tmp/pod-shared/conductor-local-ip.conf
+
+  ironic-conductor-init.sh: |
+    #!/bin/bash
+    set -ex
+    
+    if [ "x" == "x${PROVISIONER_INTERFACE}" ]; then
+      echo "Provisioner interface is not set"
+      exit 1
+    fi
+    
+    function net_pxe_addr {
+     ip addr | awk "/inet / && /${PROVISIONER_INTERFACE}/{print \$2; exit }"
+    }
+    function net_pxe_ip {
+     echo $(net_pxe_addr) | awk -F '/' '{ print $1; exit }'
+    }
+    PXE_IP=$(net_pxe_ip)
+    
+    if [ "x" == "x${PXE_IP}" ]; then
+      echo "Could not find IP for pxe to bind to"
+      exit 1
+    fi
+    tee /tmp/pod-shared/conductor-local-ip.conf << EOF
+    [DEFAULT]
+
+    # IP address of this host. If unset, will determine the IP
+    # programmatically. If unable to do so, will use "127.0.0.1".
+    # (string value)
+    my_ip = ${PXE_IP}
+    
+    [pxe]
+    # IP address of ironic-conductor node's TFTP server. (string
+    # value)
+    tftp_server = ${PXE_IP}
+    
+    [deploy]
+    # ironic-conductor node's HTTP server URL. Example:
+    # http://192.1.2.3:8080 (string value)
+    # from .deploy.ironic.http_url
+    http_url = http://${PXE_IP}:8080
+    EOF
+    
+  ironic-conductor-pxe.sh: |
+    #!/bin/bash
+    set -ex
+    function net_pxe_addr {
+     ip addr | awk "/inet / && /${PROVISIONER_INTERFACE}/{print \$2; exit }"
+    }
+    function net_pxe_ip {
+     echo $(net_pxe_addr) | awk -F '/' '{ print $1; exit }'
+    }
+    PXE_IP=$(net_pxe_ip)
+    
+    if [ "x" == "x${PXE_IP}" ]; then
+      echo "Could not find IP for pxe to bind to"
+      exit 1
+    fi
+    
+    apt-get update
+    apt-get -y install busybox
+    
+    ln -s /var/lib/openstack-helm/tftpboot /tftpboot
+    
+    chown -R nobody /tftpboot
+    chmod -R a+rx /tftpboot
+    busybox syslogd
+    
+    exec /usr/sbin/in.tftpd \
+      --verbose \
+      --verbosity 7 \
+      --foreground \
+      --user root \
+      --address 0.0.0.0:69 \
+      --map-file /tftp-map-file /tftpboot
+    
+  ironic-conductor-pxe-init.sh: |
+    #!/bin/bash
+    set -ex
+    
+    #NOTE(portdirect): this works round a limitation in Kolla images
+    if ! dpkg -l ipxe; then
+      apt-get update
+      apt-get install ipxe -y
+    fi
+    
+    mkdir -p /var/lib/openstack-helm/tftpboot
+    mkdir -p /var/lib/openstack-helm/tftpboot/master_images
+    
+    for FILE in undionly.kpxe ipxe.efi; do
+      if [ -f /usr/lib/ipxe/$FILE ]; then
+        cp -v /usr/lib/ipxe/$FILE /var/lib/openstack-helm/tftpboot
+      fi
+    done
+
+  ironic-conductor-http.sh: |
+    #!/bin/bash
+    set -ex
+    
+    mkdir -p /var/lib/openstack-helm/httpboot
+    mkdir -p /var/lib/ironic_images
+    cp -v /tmp/pod-shared/nginx.conf /etc/nginx/nginx.conf
+    exec nginx -g 'daemon off;'
+
+  ironic-conductor-http-init.sh: |
+    #!/bin/bash
+    set -ex
+    
+    if [ "x" == "x${PROVISIONER_INTERFACE}" ]; then
+      echo "Provisioner interface is not set"
+      exit 1
+    fi
+    
+    function net_pxe_addr {
+     ip addr | awk "/inet / && /${PROVISIONER_INTERFACE}/{print \$2; exit }"
+    }
+    function net_pxe_ip {
+     echo $(net_pxe_addr) | awk -F '/' '{ print $1; exit }'
+    }
+    PXE_IP=$(net_pxe_ip)
+    
+    if [ "x" == "x${PXE_IP}" ]; then
+      echo "Could not find IP for pxe to bind to"
+      exit 1
+    fi
+    
+    sed "s|OSH_PXE_IP|${PXE_IP}|g" /etc/nginx/nginx.conf > /tmp/pod-shared/nginx.conf
+
+  rabbit-init.sh: |    
+    #!/bin/bash
+    set -e
+    # Extract connection details
+    RABBIT_HOSTNAME=$(echo "${RABBITMQ_ADMIN_CONNECTION}" | \
+      awk -F'[@]' '{print $2}' | \
+      awk -F'[:/]' '{print $1}')
+    RABBIT_PORT=$(echo "${RABBITMQ_ADMIN_CONNECTION}" | \
+      awk -F'[@]' '{print $2}' | \
+      awk -F'[:/]' '{print $2}')
+
+    # Extract Admin User creadential
+    RABBITMQ_ADMIN_USERNAME=$(echo "${RABBITMQ_ADMIN_CONNECTION}" | \
+      awk -F'[@]' '{print $1}' | \
+      awk -F'[//:]' '{print $4}')
+    RABBITMQ_ADMIN_PASSWORD=$(echo "${RABBITMQ_ADMIN_CONNECTION}" | \
+      awk -F'[@]' '{print $1}' | \
+      awk -F'[//:]' '{print $5}')
+    
+    # Extract User creadential
+    RABBITMQ_USERNAME=$(echo "${RABBITMQ_USER_CONNECTION}" | \
+      awk -F'[@]' '{print $1}' | \
+      awk -F'[//:]' '{print $4}')
+    RABBITMQ_PASSWORD=$(echo "${RABBITMQ_USER_CONNECTION}" | \
+      awk -F'[@]' '{print $1}' | \
+      awk -F'[//:]' '{print $5}')
+    
+    # Extract User vHost
+    RABBITMQ_VHOST=$(echo "${RABBITMQ_USER_CONNECTION}" | \
+      awk -F'[@]' '{print $2}' | \
+      awk -F'[:/]' '{print $3}')
+    
+    function rabbitmqadmin_cli () {
+      rabbitmqadmin \
+        --host="${RABBIT_HOSTNAME}" \
+        --port="${RABBIT_PORT}" \
+        --username="${RABBITMQ_ADMIN_USERNAME}" \
+        --password="${RABBITMQ_ADMIN_PASSWORD}" \
+        ${@}
+    }
+    
+    echo "Managing: User: ${RABBITMQ_USERNAME}"
+    rabbitmqadmin_cli \
+      declare user \
+      name="${RABBITMQ_USERNAME}" \
+      password="${RABBITMQ_PASSWORD}" \
+      tags="user"
+    
+    echo "Managing: vHost: ${RABBITMQ_VHOST}"
+    rabbitmqadmin_cli \
+      declare vhost \
+      name="${RABBITMQ_VHOST}"
+    
+    echo "Managing: Permissions: ${RABBITMQ_USERNAME} on ${RABBITMQ_VHOST}"
+    rabbitmqadmin_cli \
+      declare permission \
+      vhost="${RABBITMQ_VHOST}" \
+      user="${RABBITMQ_USERNAME}" \
+      configure=".*" \
+      write=".*" \
+      read=".*"
+
+    if [ ! -z "$RABBITMQ_AUXILIARY_CONFIGURATION" ]
+    then
+      echo "Applying additional configuration"
+      echo "${RABBITMQ_AUXILIARY_CONFIGURATION}" > /tmp/rmq_definitions.json
+      rabbitmqadmin_cli import /tmp/rmq_definitions.json
+    fi

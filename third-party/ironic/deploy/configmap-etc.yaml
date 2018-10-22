@@ -1,0 +1,127 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ironic-etc
+data:
+  ironic.conf: |
+    [DEFAULT]
+    enabled_drivers = agent_ipmitool
+    log_config_append = /etc/ironic/logging.conf
+    transport_url = rabbit://rabbit@rabbitmq:5672/ironic
+    auth_stratgegy = noauth
+    [api]
+    port = 6385
+    public_endpoint = http://ironic:80/
+    [conductor]
+    api_url = http://ironic-api:6385/
+    [database]
+    connection = mysql+pymysql://ironic:password@mysql:3306/ironic
+    [deploy]
+    http_root = /var/lib/httpboot
+    [inspector]
+    auth_type = None
+    [pxe]
+    images_path = /var/lib/ironic/images
+    instance_master_path = /var/lib/ironic/master_images
+    ipxe_enabled = true
+    pxe_append_params = nofb nomodeset vga=normal ipa-debug=1
+    pxe_bootfile_name = undionly.kpxe
+    pxe_config_template = $pybasedir/drivers/modules/ipxe_config.template
+    tftp_master_path = /var/lib/tftpboot/master_images
+    tftp_root = /var/lib/tftpboot
+    uefi_pxe_bootfile_name = ipxe.efi
+    uefi_pxe_config_template = $pybasedir/drivers/modules/ipxe_config.template
+    [service_catalog]
+    auth_type = None
+    [dhcp]
+    dhcp_provider = none
+    
+  logging.conf: |
+    [formatter_context]
+    class = oslo_log.formatters.ContextFormatter
+    [formatter_default]
+    format = %(message)s
+    [formatters]
+    keys = context,default
+    [handler_null]
+    args = ()
+    class = logging.NullHandler
+    formatter = default
+    [handler_stderr]
+    args = (sys.stderr,)
+    class = StreamHandler
+    formatter = context
+    [handler_stdout]
+    args = (sys.stdout,)
+    class = StreamHandler
+    formatter = context
+    [handlers]
+    keys = stdout,stderr,null
+    [logger_amqp]
+    handlers = stderr
+    level = WARNING
+    qualname = amqp
+    [logger_amqplib]
+    handlers = stderr
+    level = WARNING
+    qualname = amqplib
+    [logger_boto]
+    handlers = stderr
+    level = WARNING
+    qualname = boto
+    [logger_eventletwsgi]
+    handlers = stderr
+    level = WARNING
+    qualname = eventlet.wsgi.server
+    [logger_ironic]
+    handlers = stdout
+    level = INFO
+    qualname = ironic
+    [logger_root]
+    handlers = 
+    level = WARNING
+    [logger_sqlalchemy]
+    handlers = stderr
+    level = WARNING
+    qualname = sqlalchemy
+    [loggers]
+    keys = root,ironic
+    
+  policy.json: |
+    {}  
+  tftp-map-file: |
+    re ^(/tftpboot/) /tftpboot/\2
+    re ^/tftpboot/ /tftpboot/
+    re ^(^/) /tftpboot/\1
+    re ^([^/]) /tftpboot/\1
+    
+  nginx.conf: |
+    user  nginx;
+    worker_processes  1;
+    error_log  /var/log/nginx/error.log warn;
+    pid        /var/run/nginx.pid;
+    events {
+        worker_connections  1024;
+    }
+    http {
+        include       /etc/nginx/mime.types;
+        default_type  application/octet-stream;
+        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                          '$status $body_bytes_sent "$http_referer" '
+                          '"$http_user_agent" "$http_x_forwarded_for"';
+        access_log  /var/log/nginx/access.log  main;
+        sendfile        on;
+        #tcp_nopush     on;
+        keepalive_timeout  65;
+        #gzip  on;
+        server {
+          listen       0.0.0.0:8080;
+          server_name  localhost;
+          #charset koi8-r;
+          access_log  /var/log/nginx/host.access.log  main;
+          location / {
+              root   /var/lib/httpboot;
+          }
+        }
+    }
