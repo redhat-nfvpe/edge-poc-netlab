@@ -1,0 +1,152 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ironic-db-init
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: queens-ironic-db-init
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: queens-default-ironic-db-init
+subjects:
+  - kind: ServiceAccount
+    name: ironic-db-init
+    namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: queens-default-ironic-db-init
+  namespace: default
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - batch
+      - apps
+    verbs:
+      - get
+      - list
+    resources:
+      - services
+      - endpoints
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "ironic-db-init"
+spec:
+  template:
+    metadata:
+      labels:
+        release_group: queens
+        application: ironic
+        component: db-init
+    spec:
+      serviceAccountName: ironic-db-init
+      restartPolicy: OnFailure
+      nodeSelector:
+        openstack-control-plane: enabled
+        
+      initContainers:
+        - name: init
+          image: "quay.io/stackanetes/kubernetes-entrypoint:v0.3.1"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: INTERFACE_NAME
+              value: eth0
+            - name: PATH
+              value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/
+            - name: COMMAND
+              value: "echo done"
+          command:
+            - kubernetes-entrypoint
+          volumeMounts:
+            []
+            
+      containers:
+
+        - name: "ironic-db-init-0"
+          image: docker.io/openstackhelm/heat:queens
+          imagePullPolicy: IfNotPresent
+          
+          env:
+            - name: ROOT_DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: "ironic-db-admin"
+                  key: DB_HOST
+            - name: ROOT_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: "ironic-db-admin"
+                  key: DB_USER
+            - name: ROOT_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: "ironic-db-admin"
+                  key: DB_PASSWORD
+            - name: USER_DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: "ironic-db-user"
+                  key: DB_HOST
+            - name: USER_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: "ironic-db-user"
+                  key: DB_USER
+            - name: USER_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: "ironic-db-user"
+                  key: DB_PASSWORD
+            - name: USER_DB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: "ironic-db-user"
+                  key: DB_DATABASE
+          command:
+            - /tmp/db-init.sh
+          volumeMounts:
+            - name: db-init-sh
+              mountPath: /tmp/db-init.sh
+              subPath: db-init.sh
+              readOnly: true
+            - name: etc-service
+              mountPath: "/etc/ironic"
+            - name: db-init-conf
+              mountPath: "/etc/ironic/ironic.conf"
+              subPath: "ironic.conf"
+              readOnly: true
+            - name: db-init-conf
+              mountPath: "/etc/ironic/logging.conf"
+              subPath: "logging.conf"
+              readOnly: true
+      volumes:
+        - name: db-init-sh
+          configMap:
+            name: "ironic-bin"
+            defaultMode: 0555
+        - name: etc-service
+          emptyDir: {}
+        - name: db-init-conf
+          configMap:
+            name: "ironic-etc"
+            defaultMode: 0444

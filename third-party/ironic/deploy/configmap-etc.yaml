@@ -16,7 +16,7 @@ data:
     [conductor]
     api_url = http://ironic-api:6385/
     [database]
-    connection = mysql+pymysql://ironic:password@mysql:3306/ironic
+    connection = mysql+pymysql://root:password@mysql:3306/ironic
     [deploy]
     http_root = /var/lib/httpboot
     [inspector]
