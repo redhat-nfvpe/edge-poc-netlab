@@ -12,7 +12,7 @@
     - '{"allowHostPorts": true}'
     - '{"allowPrivilegedContainer": true}'
     - '{"allowedCapabilities": ["DAC_READ_SEARCH", "SYS_RESOURCE", "CAP_NET_RAW", "CAP_NET_ADMIN"]}'
-    - '{"dropCapabilities": ["KILL", "MKNOD"]}'
+    - '{"requiredDropCapabilities": ["KILL", "MKNOD"]}'
     - '{"runAsUser": {"type": "RunAsAny" }}'
     - '{"volumes": ["configMap", "downwardAPI", "emptyDir", "hostPath", "persistentVolumeClaim", "projected", "secret", "nfs"]}'
 
