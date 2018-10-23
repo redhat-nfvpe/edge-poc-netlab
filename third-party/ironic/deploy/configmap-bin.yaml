@@ -30,6 +30,10 @@ data:
     set -ex
     COMMAND="${@:-start}"
     
+    apt-get update
+    apt-get -y install busybox
+    busybox syslogd
+
     function start () {
       exec ironic-api \
             --config-file /etc/ironic/ironic.conf
@@ -45,10 +49,10 @@ data:
     #!/bin/bash
     set -ex
     
-    mkdir -p /var/lib/openstack-helm/ironic/images
-    mkdir -p /var/lib/openstack-helm/ironic/master_images
+    mkdir -p /var/lib/pod_data/ironic/images
+    mkdir -p /var/lib/pod_data/ironic/master_images
     mkdir -p /var/lib/ironic_images
-    
+
     exec ironic-conductor \
           --config-file /etc/ironic/ironic.conf \
           --config-file /tmp/pod-shared/conductor-local-ip.conf
@@ -57,23 +61,6 @@ data:
     #!/bin/bash
     set -ex
     
-    if [ "x" == "x${PROVISIONER_INTERFACE}" ]; then
-      echo "Provisioner interface is not set"
-      exit 1
-    fi
-    
-    function net_pxe_addr {
-     ip addr | awk "/inet / && /${PROVISIONER_INTERFACE}/{print \$2; exit }"
-    }
-    function net_pxe_ip {
-     echo $(net_pxe_addr) | awk -F '/' '{ print $1; exit }'
-    }
-    PXE_IP=$(net_pxe_ip)
-    
-    if [ "x" == "x${PXE_IP}" ]; then
-      echo "Could not find IP for pxe to bind to"
-      exit 1
-    fi
     tee /tmp/pod-shared/conductor-local-ip.conf << EOF
     [DEFAULT]
 
@@ -91,29 +78,17 @@ data:
     # ironic-conductor node's HTTP server URL. Example:
     # http://192.1.2.3:8080 (string value)
     # from .deploy.ironic.http_url
-    http_url = http://${PXE_IP}:8080
+    http_url = http://${PXE_IP}:8081
     EOF
     
   ironic-conductor-pxe.sh: |
     #!/bin/bash
     set -ex
-    function net_pxe_addr {
-     ip addr | awk "/inet / && /${PROVISIONER_INTERFACE}/{print \$2; exit }"
-    }
-    function net_pxe_ip {
-     echo $(net_pxe_addr) | awk -F '/' '{ print $1; exit }'
-    }
-    PXE_IP=$(net_pxe_ip)
-    
-    if [ "x" == "x${PXE_IP}" ]; then
-      echo "Could not find IP for pxe to bind to"
-      exit 1
-    fi
     
     apt-get update
     apt-get -y install busybox
     
-    ln -s /var/lib/openstack-helm/tftpboot /tftpboot
+    ln -s /var/lib/pod_data/tftpboot /tftpboot
     
     chown -R nobody /tftpboot
     chmod -R a+rx /tftpboot
@@ -137,12 +112,12 @@ data:
       apt-get install ipxe -y
     fi
     
-    mkdir -p /var/lib/openstack-helm/tftpboot
-    mkdir -p /var/lib/openstack-helm/tftpboot/master_images
+    mkdir -p /var/lib/pod_data/tftpboot
+    mkdir -p /var/lib/pod_data/tftpboot/master_images
     
     for FILE in undionly.kpxe ipxe.efi; do
       if [ -f /usr/lib/ipxe/$FILE ]; then
-        cp -v /usr/lib/ipxe/$FILE /var/lib/openstack-helm/tftpboot
+        cp -v /usr/lib/ipxe/$FILE /var/lib/pod_data/tftpboot
       fi
     done
 
@@ -150,7 +125,7 @@ data:
     #!/bin/bash
     set -ex
     
-    mkdir -p /var/lib/openstack-helm/httpboot
+    mkdir -p /var/lib/pod_data/httpboot
     mkdir -p /var/lib/ironic_images
     cp -v /tmp/pod-shared/nginx.conf /etc/nginx/nginx.conf
     exec nginx -g 'daemon off;'
@@ -158,24 +133,6 @@ data:
   ironic-conductor-http-init.sh: |
     #!/bin/bash
     set -ex
-    
-    if [ "x" == "x${PROVISIONER_INTERFACE}" ]; then
-      echo "Provisioner interface is not set"
-      exit 1
-    fi
-    
-    function net_pxe_addr {
-     ip addr | awk "/inet / && /${PROVISIONER_INTERFACE}/{print \$2; exit }"
-    }
-    function net_pxe_ip {
-     echo $(net_pxe_addr) | awk -F '/' '{ print $1; exit }'
-    }
-    PXE_IP=$(net_pxe_ip)
-    
-    if [ "x" == "x${PXE_IP}" ]; then
-      echo "Could not find IP for pxe to bind to"
-      exit 1
-    fi
     
     sed "s|OSH_PXE_IP|${PXE_IP}|g" /etc/nginx/nginx.conf > /tmp/pod-shared/nginx.conf
 

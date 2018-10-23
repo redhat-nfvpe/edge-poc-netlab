@@ -7,8 +7,8 @@ data:
   ironic.conf: |
     [DEFAULT]
     enabled_drivers = agent_ipmitool
-    log_config_append = /etc/ironic/logging.conf
-    transport_url = rabbit://rabbit@rabbitmq:5672/ironic
+    transport_url = rabbit://ironic:password@rabbitmq:5672/ironic
+    log_dir = /var/log/ironic
     auth_stratgegy = noauth
     [api]
     port = 6385
@@ -36,57 +36,6 @@ data:
     auth_type = None
     [dhcp]
     dhcp_provider = none
-    
-  logging.conf: |
-    [formatter_context]
-    class = oslo_log.formatters.ContextFormatter
-    [formatter_default]
-    format = %(message)s
-    [formatters]
-    keys = context,default
-    [handler_null]
-    args = ()
-    class = logging.NullHandler
-    formatter = default
-    [handler_stderr]
-    args = (sys.stderr,)
-    class = StreamHandler
-    formatter = context
-    [handler_stdout]
-    args = (sys.stdout,)
-    class = StreamHandler
-    formatter = context
-    [handlers]
-    keys = stdout,stderr,null
-    [logger_amqp]
-    handlers = stderr
-    level = WARNING
-    qualname = amqp
-    [logger_amqplib]
-    handlers = stderr
-    level = WARNING
-    qualname = amqplib
-    [logger_boto]
-    handlers = stderr
-    level = WARNING
-    qualname = boto
-    [logger_eventletwsgi]
-    handlers = stderr
-    level = WARNING
-    qualname = eventlet.wsgi.server
-    [logger_ironic]
-    handlers = stdout
-    level = INFO
-    qualname = ironic
-    [logger_root]
-    handlers = 
-    level = WARNING
-    [logger_sqlalchemy]
-    handlers = stderr
-    level = WARNING
-    qualname = sqlalchemy
-    [loggers]
-    keys = root,ironic
     
   policy.json: |
     {}  
@@ -116,7 +65,7 @@ data:
         keepalive_timeout  65;
         #gzip  on;
         server {
-          listen       0.0.0.0:8080;
+          listen       0.0.0.0:8081;
           server_name  localhost;
           #charset koi8-r;
           access_log  /var/log/nginx/host.access.log  main;

@@ -1,0 +1,283 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ironic-conductor
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: queens-ironic-conductor
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: queens-default-ironic-conductor
+subjects:
+  - kind: ServiceAccount
+    name: ironic-conductor
+    namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: queens-default-ironic-conductor
+  namespace: default
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - batch
+      - apps
+    verbs:
+      - get
+      - list
+    resources:
+      - services
+      - endpoints
+      - jobs
+      - pods
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ironic-conductor
+  labels:
+    release_group: queens
+    application: ironic
+    component: conductor
+spec:
+  serviceName: ironic-conductor
+  replicas: 1
+  selector:
+    matchLabels:
+      release_group: queens
+      application: ironic
+      component: conductor
+  template:
+    metadata:
+      labels:
+        release_group: queens
+        application: ironic
+        component: conductor
+    spec:
+      serviceAccountName: ironic-conductor
+      nodeSelector:
+        openstack-control-plane: enabled
+      securityContext:
+        runAsUser: 0
+      hostNetwork: True
+      hostIPC: True
+      dnsPolicy: ClusterFirstWithHostNet
+      initContainers:
+        - name: init
+          image: "quay.io/stackanetes/kubernetes-entrypoint:v0.3.1"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: INTERFACE_NAME
+              value: eth0
+            - name: PATH
+              value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/
+            - name: DEPENDENCY_SERVICE
+              value: "default:ironic-api,default:rabbitmq"
+            - name: DEPENDENCY_JOBS
+              value: "ironic-db-sync,ironic-rabbit-init"
+            - name: DEPENDENCY_DAEMONSET
+              value: ""
+            - name: DEPENDENCY_CONTAINER
+              value: ""
+            - name: DEPENDENCY_POD_JSON
+              value: ""
+            - name: COMMAND
+              value: "echo done"
+          command:
+            - kubernetes-entrypoint
+          volumeMounts:
+            null
+            
+        - name: ironic-conductor-pxe-init
+          image: "docker.io/openstackhelm/ironic:queens"
+          imagePullPolicy: IfNotPresent
+          command:
+            - /tmp/ironic-conductor-pxe-init.sh
+          volumeMounts:
+            - name: ironic-bin
+              mountPath: /tmp/ironic-conductor-pxe-init.sh
+              subPath: ironic-conductor-pxe-init.sh
+              readOnly: true
+            - name: pod-data
+              mountPath: /var/lib/pod_data
+        - name: ironic-conductor-init
+          image: "docker.io/openstackhelm/ironic:queens"
+          imagePullPolicy: IfNotPresent
+          
+          env:
+            - name: PXE_IP
+              value: 192.168.23.1
+          command:
+            - /tmp/ironic-conductor-init.sh
+          volumeMounts:
+            - name: ironic-bin
+              mountPath: /tmp/ironic-conductor-init.sh
+              subPath: ironic-conductor-init.sh
+              readOnly: true
+            - name: pod-shared
+              mountPath: /tmp/pod-shared
+        - name: ironic-conductor-http-init
+          image: "docker.io/openstackhelm/ironic:queens"
+          imagePullPolicy: IfNotPresent
+          
+          env:
+            - name: PXE_IP
+              value: 192.168.23.1
+          command:
+            - /tmp/ironic-conductor-http-init.sh
+          volumeMounts:
+            - name: ironic-bin
+              mountPath: /tmp/ironic-conductor-http-init.sh
+              subPath: ironic-conductor-http-init.sh
+              readOnly: true
+            - name: ironic-etc
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+            - name: pod-shared
+              mountPath: /tmp/pod-shared
+      containers:
+        - name: ironic-conductor
+          image: "docker.io/openstackhelm/ironic:queens"
+          imagePullPolicy: IfNotPresent
+          
+          securityContext:
+            privileged: true
+          command:
+            - /tmp/ironic-conductor.sh
+          volumeMounts:
+            - name: ironic-bin
+              mountPath: /tmp/ironic-conductor.sh
+              subPath: ironic-conductor.sh
+              readOnly: true
+            - name: pod-shared
+              mountPath: /tmp/pod-shared
+            - name: pod-var-cache-ironic
+              mountPath: /var/cache/ironic
+            - name: ironic-etc
+              mountPath: /etc/ironic/ironic.conf
+              subPath: ironic.conf
+              readOnly: true
+            - name: ironic-etc
+              mountPath: /etc/ironic/logging.conf
+              subPath: logging.conf
+              readOnly: true
+            - name: ironic-etc
+              mountPath: /etc/ironic/policy.json
+              subPath: policy.json
+              readOnly: true
+            - name: host-var-lib-ironic
+              mountPath: /var/lib/ironic
+            - name: host-run
+              mountPath: /var/run
+            - name: host-dev
+              mountPath: /dev
+            - name: host-sys
+              mountPath: /sys
+            - name: pod-data
+              mountPath: /var/lib/pod_data
+            - name: ironic-images
+              mountPath: /var/lib/ironic_images
+        - name: ironic-conductor-pxe
+          image: "docker.io/openstackhelm/ironic:queens"
+          imagePullPolicy: IfNotPresent
+          
+          securityContext:
+            privileged: true
+          env:
+            - name: PXE_IP
+              value: 192.168.23.1
+          command:
+            - /tmp/ironic-conductor-pxe.sh
+          volumeMounts:
+            - name: ironic-bin
+              mountPath: /tmp/ironic-conductor-pxe.sh
+              subPath: ironic-conductor-pxe.sh
+              readOnly: true
+            - name: ironic-etc
+              mountPath: /tftp-map-file
+              subPath: tftp-map-file
+              readOnly: true
+            - name: pod-data
+              mountPath: /var/lib/pod_data
+            - name: ironic-images
+              mountPath: /var/lib/ironic_images
+          ports:
+            - containerPort: 69
+              hostPort: 69
+              protocol: UDP
+        - name: ironic-conductor-http
+          image: "docker.io/nginx:1.13.3"
+          imagePullPolicy: IfNotPresent
+          
+          command:
+            - /tmp/ironic-conductor-http.sh
+          volumeMounts:
+            - name: ironic-bin
+              mountPath: /tmp/ironic-conductor-http.sh
+              subPath: ironic-conductor-http.sh
+              readOnly: true
+            - name: pod-shared
+              mountPath: /tmp/pod-shared
+              readOnly: true
+            - name: pod-data
+              mountPath: /var/lib/pod_data
+            - name: ironic-images
+              mountPath: /var/lib/ironic_images
+      volumes:
+        - name: pod-shared
+          emptyDir: {}
+        - name: pod-var-cache-ironic
+          emptyDir: {}
+        - name: ironic-bin
+          configMap:
+            name: ironic-bin
+            defaultMode: 0555
+        - name: ironic-etc
+          configMap:
+            name: ironic-etc
+            defaultMode: 0444
+        - name: host-var-lib-ironic
+          hostPath:
+            path: /var/lib/ironic
+        - name: host-run
+          hostPath:
+            path: /var/run
+        - name: host-dev
+          hostPath:
+            path: /dev
+        - name: host-sys
+          hostPath:
+            path: /sys
+        - name: pod-data
+          emptyDir: {}
+        - name: ironic-images
+          persistentVolumeClaim:
+            claimName: ironic-images
+  volumeClaimTemplates:
+  - metadata:
+      name: ironic-images
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage:  5Gi
+      storageClassName: "managed-nfs-storage"
