@@ -47,3 +47,4 @@
   with_items:
     - 5672/tcp
     - 15672/tcp
+    - 8081/tcp
