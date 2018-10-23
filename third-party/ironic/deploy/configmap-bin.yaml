@@ -30,10 +30,6 @@ data:
     set -ex
     COMMAND="${@:-start}"
     
-    apt-get update
-    apt-get -y install busybox
-    busybox syslogd
-
     function start () {
       exec ironic-api \
             --config-file /etc/ironic/ironic.conf
@@ -53,9 +49,13 @@ data:
     mkdir -p /var/lib/pod_data/ironic/master_images
     mkdir -p /var/lib/ironic_images
 
-    exec ironic-conductor \
-          --config-file /etc/ironic/ironic.conf \
-          --config-file /tmp/pod-shared/conductor-local-ip.conf
+    while true; do
+      sleep 30
+    done
+
+    #exec ironic-conductor \
+    #      --config-file /etc/ironic/ironic.conf \
+    #      --config-file /tmp/pod-shared/conductor-local-ip.conf
 
   ironic-conductor-init.sh: |
     #!/bin/bash

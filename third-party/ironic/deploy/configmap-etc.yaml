@@ -9,7 +9,7 @@ data:
     enabled_drivers = agent_ipmitool
     transport_url = rabbit://ironic:password@rabbitmq:5672/ironic
     log_dir = /var/log/ironic
-    auth_stratgegy = noauth
+    auth_strategy = noauth
     [api]
     port = 6385
     public_endpoint = http://ironic:80/

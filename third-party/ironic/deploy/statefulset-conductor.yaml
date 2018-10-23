@@ -242,6 +242,10 @@ spec:
               mountPath: /var/lib/pod_data
             - name: ironic-images
               mountPath: /var/lib/ironic_images
+          ports:
+            - containerPort: 8081
+              hostPort: 8081
+              protocol: TCP
       volumes:
         - name: pod-shared
           emptyDir: {}
