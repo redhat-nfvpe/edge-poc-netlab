@@ -8,6 +8,7 @@
   with_items:
     - '{"allowHostDirVolumePlugin": true}'
     - '{"allowHostNetwork": true}'
+    - '{"allowHostIPC": true}'
     - '{"allowHostPorts": true}'
     - '{"allowPrivilegedContainer": true}'
     - '{"allowedCapabilities": ["DAC_READ_SEARCH", "SYS_RESOURCE"]}'
