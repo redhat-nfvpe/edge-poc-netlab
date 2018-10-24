@@ -21,3 +21,6 @@ netlab_host_provider = baremetal
 
 [bootstrap_host]
 192.168.126.2 ansible_user=core
+
+[master_host]
+192.168.126.3 ansible_user=core

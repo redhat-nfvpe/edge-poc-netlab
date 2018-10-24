@@ -38,3 +38,13 @@
       virt:
         name: "server01"
         state: destroyed
+
+- name: Disable selinux on master
+  hosts: master_host
+  gather_facts: yes
+
+  tasks:
+    - name: Disable selinux
+      selinux:
+        policy: targeted
+        state: permissive

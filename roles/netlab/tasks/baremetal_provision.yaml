@@ -1,8 +1,4 @@
 ---
-- name: Disable selinux on master
-  selinux:
-      state: disabled
-
 - name: Patch restricted security context
   shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl patch scc restricted -p '{{ item }}'
   with_items:
