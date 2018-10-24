@@ -48,3 +48,15 @@
   with_items:
     - rabbitmq_rbac.yaml
     - rabbitmq_statefulsets.yaml
+
+- name: Deploy the ironic manifests
+  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'WORKSPACE') }}/edge-poc-netlab/third-party/ironic/deploy/{{ item }}
+  with_items:
+    - cluster-with-volume.yaml
+    - configmap-etc.yaml
+    - configmap-bin.yaml
+    - secret-db-admin.yaml
+    - secret-rabbitmq.yaml
+    - job-db-init.yaml
+    - job-db-sync.yaml
+    - job-rabbit-init.yaml
