@@ -48,3 +48,4 @@
       selinux:
         policy: targeted
         state: permissive
+      become: true
