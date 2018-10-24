@@ -14,7 +14,7 @@ data:
     echo "Created database ${USER_DB_DATABASE}"
 
     # Create user
-    mysql -h ${ROOT_DB_HOST} -u ${ROOT_DB_USER} -p${ROOT_DB_PASSWORD} -e "CREATE USER IF NOT EXISTS ${USER_DB_USER} IDENTIFIED BY '${USER_DB_PASSWORD}'"
+    mysql -h ${ROOT_DB_HOST} -u ${ROOT_DB_USER} -p${ROOT_DB_PASSWORD} -e "CREATE USER IF NOT EXISTS ${USER_DB_USER}@'%' IDENTIFIED BY '${USER_DB_PASSWORD}'"
     echo "Created user ${USER_DB_USER}"
 
     # Grant permissions
@@ -24,11 +24,21 @@ data:
   db-sync.sh: |
     #!/bin/bash
     set -ex
+
+    apt-get update
+    apt-get -y install python-pip
+    pip install --upgrade PyMySQL
+
     ironic-dbsync upgrade
 
   ironic-api.sh: |
     #!/bin/bash
     set -ex
+
+    apt-get update
+    apt-get -y install python-pip
+    pip install --upgrade PyMySQL
+
     COMMAND="${@:-start}"
     
     function start () {
@@ -45,6 +55,10 @@ data:
   ironic-conductor.sh: |
     #!/bin/bash
     set -ex
+
+    apt-get update
+    apt-get -y install python-pip
+    pip install --upgrade PyMySQL
     
     mkdir -p /var/lib/pod_data/ironic/images
     mkdir -p /var/lib/pod_data/ironic/master_images
@@ -54,9 +68,9 @@ data:
       sleep 30
     done
 
-    #exec ironic-conductor \
-    #      --config-file /etc/ironic/ironic.conf \
-    #      --config-file /tmp/pod-shared/conductor-local-ip.conf
+    exec ironic-conductor \
+          --config-file /etc/ironic/ironic.conf \
+          --config-file /tmp/pod-shared/conductor-local-ip.conf
 
   ironic-conductor-init.sh: |
     #!/bin/bash
