@@ -1,4 +1,12 @@
 ---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-cluster-password
+type: Opaque
+data:
+  password: cGFzc3dvcmQK
+---
 apiVersion: mysql.oracle.com/v1alpha1
 kind: Cluster
 metadata:
@@ -6,7 +14,7 @@ metadata:
 spec:
   members: 1
   secretRef:
-    name: mysql-root-password
+    name: mysql-cluster-password
   volumeClaimTemplate:
     metadata:
       name: data

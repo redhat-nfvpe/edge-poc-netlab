@@ -9,6 +9,10 @@ data:
     apt-get update
     apt-get -y install mysql-client
 
+    while true; do
+        sleep 30
+    done
+
     mysql -h ${ROOT_DB_HOST} -u ${ROOT_DB_USER} -p${ROOT_DB_PASSWORD} -e "CREATE DATABASE IF NOT EXISTS ${USER_DB_DATABASE}"
     echo "Created database ${USER_DB_DATABASE}"
 
