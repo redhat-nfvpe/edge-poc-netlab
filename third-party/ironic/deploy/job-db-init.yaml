@@ -88,20 +88,14 @@ spec:
           
           env:
             - name: ROOT_DB_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: "ironic-db-admin"
-                  key: DB_HOST
+              value: "mysql"
             - name: ROOT_DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: "ironic-db-admin"
-                  key: DB_USER
+              value: "root"
             - name: ROOT_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: "ironic-db-admin"
-                  key: DB_PASSWORD
+                  name: "mysql-root-password"
+                  key: password
             - name: USER_DB_HOST
               valueFrom:
                 secretKeyRef:
