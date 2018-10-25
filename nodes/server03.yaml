@@ -16,3 +16,8 @@ connections:
 netlab_mgmt_source_bridge: br0
 mac_address: 52:54:00:cc:cc:03
 start: false
+
+ipmi:
+  username: admin
+  password: password
+  port: 6232
