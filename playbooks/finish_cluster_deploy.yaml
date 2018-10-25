@@ -47,7 +47,7 @@
     - name: Disable selinux
       selinux:
         policy: targeted
-        state: permissive
+        state: disabled
       become: true
 
     - name: Remount selinux to avoid permissions with containers

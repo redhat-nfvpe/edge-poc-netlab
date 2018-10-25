@@ -10,6 +10,7 @@
     - '{"allowedCapabilities": ["DAC_READ_SEARCH", "SYS_RESOURCE", "CAP_NET_RAW", "CAP_NET_ADMIN"]}'
     - '{"requiredDropCapabilities": ["KILL", "MKNOD"]}'
     - '{"runAsUser": {"type": "RunAsAny" }}'
+    - '{"seLinuxContext": {"type": "RunAsAny"}}'
     - '{"volumes": ["configMap", "downwardAPI", "emptyDir", "hostPath", "persistentVolumeClaim", "projected", "secret", "nfs"]}'
 
 - name: Label master nodes
