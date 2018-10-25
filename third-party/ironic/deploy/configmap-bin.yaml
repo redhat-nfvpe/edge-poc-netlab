@@ -92,14 +92,10 @@ data:
     #!/bin/bash
     set -ex
     
-    apt-get update
-    apt-get -y install busybox
-    
     ln -s /var/lib/pod_data/tftpboot /tftpboot
     
     chown -R nobody /tftpboot
     chmod -R a+rx /tftpboot
-    busybox syslogd
     
     exec /usr/sbin/in.tftpd \
       --verbose \
