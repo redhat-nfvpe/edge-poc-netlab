@@ -54,26 +54,16 @@ spec:
       release_group: queens
       application: ironic
       component: api
-  revisionHistoryLimit: 3
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 1
-      maxSurge: 3
   template:
     metadata:
       labels:
         release_group: queens
         application: ironic
         component: api
-      annotations:
-        configmap-bin-hash: "68c88253c96df66a791a8b298fe0499f228574d16879817fe06acbe66ebfbfe4"
-        configmap-etc-hash: "bdbb9530aa492186c6cafd49b2fa0c6a513cbb3d71e4c17a0b5e342debc10d9a"
     spec:
       serviceAccountName: ironic-api
       nodeSelector:
         openstack-control-plane: enabled
-      terminationGracePeriodSeconds: 30
       initContainers:
         
         
@@ -107,6 +97,7 @@ spec:
             - kubernetes-entrypoint
           volumeMounts:
             null
+
       containers:
         - name: ironic-api
           image: "docker.io/openstackhelm/ironic:queens"

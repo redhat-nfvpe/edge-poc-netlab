@@ -35,8 +35,6 @@ data:
     #!/bin/bash
     set -ex
 
-    apt-get update
-    apt-get -y install python-pip
     pip install --upgrade PyMySQL
 
     COMMAND="${@:-start}"
@@ -56,10 +54,8 @@ data:
     #!/bin/bash
     set -ex
 
-    sudo apt-get update
-    sudo apt-get -y install python-pip
     pip install --upgrade PyMySQL
-    
+
     mkdir -p /var/lib/pod_data/ironic/images
     mkdir -p /var/lib/pod_data/ironic/master_images
     mkdir -p /var/lib/ironic_images

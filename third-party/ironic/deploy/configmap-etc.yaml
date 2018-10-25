@@ -6,7 +6,9 @@ metadata:
 data:
   ironic.conf: |
     [DEFAULT]
-    enabled_drivers = agent_ipmitool
+    enabled_hardware_types = ipmi
+    enabled_management_interfaces = ipmitool,noop
+    enabled_power_interfaces = ipmitool
     transport_url = rabbit://ironic:password@rabbitmq:5672/ironic
     log_dir = /var/log/ironic
     auth_strategy = noauth
