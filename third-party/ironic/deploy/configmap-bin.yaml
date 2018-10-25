@@ -58,7 +58,6 @@ data:
 
     mkdir -p /var/lib/pod_data/ironic/images
     mkdir -p /var/lib/pod_data/ironic/master_images
-    mkdir -p /var/lib/ironic_images
 
     exec ironic-conductor \
           --config-file /etc/ironic/ironic.conf \
@@ -129,7 +128,6 @@ data:
     set -ex
     
     mkdir -p /var/lib/pod_data/httpboot
-    mkdir -p /var/lib/ironic_images
     cp -v /tmp/pod-shared/nginx.conf /etc/nginx/nginx.conf
     exec nginx -g 'daemon off;'
 

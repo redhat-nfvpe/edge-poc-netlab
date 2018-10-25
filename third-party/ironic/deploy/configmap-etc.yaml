@@ -86,5 +86,9 @@ data:
           location / {
               root   /var/lib/pod_data/httpboot;
           }
+
+          location /images {
+              alias /var/lib/ironic_images;
+          }
         }
     }
