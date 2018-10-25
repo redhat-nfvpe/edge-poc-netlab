@@ -18,12 +18,12 @@ data:
     [database]
     connection = mysql+pymysql://ironic:password@mysql:3306/ironic
     [deploy]
-    http_root = /var/lib/httpboot
+    http_root = /var/lib/pod_data/httpboot
     [inspector]
     auth_type = None
     [pxe]
-    images_path = /var/lib/ironic/images
-    instance_master_path = /var/lib/ironic/master_images
+    images_path = /var/lib/pod_data/ironic/images
+    instance_master_path = /var/lib/pod_data/ironic/master_images
     ipxe_enabled = true
     pxe_append_params = nofb nomodeset vga=normal ipa-debug=1
     pxe_bootfile_name = undionly.kpxe
@@ -70,7 +70,7 @@ data:
           #charset koi8-r;
           access_log  /var/log/nginx/host.access.log  main;
           location / {
-              root   /var/lib/httpboot;
+              root   /var/lib/pod_data/httpboot;
           }
         }
     }

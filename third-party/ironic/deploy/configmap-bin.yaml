@@ -56,17 +56,13 @@ data:
     #!/bin/bash
     set -ex
 
-    apt-get update
-    apt-get -y install python-pip
+    sudo apt-get update
+    sudo apt-get -y install python-pip
     pip install --upgrade PyMySQL
     
     mkdir -p /var/lib/pod_data/ironic/images
     mkdir -p /var/lib/pod_data/ironic/master_images
     mkdir -p /var/lib/ironic_images
-
-    while true; do
-      sleep 30
-    done
 
     exec ironic-conductor \
           --config-file /etc/ironic/ironic.conf \
