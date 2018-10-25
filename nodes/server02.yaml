@@ -2,6 +2,7 @@
 vm_name: server02
 vm_disk: rhcos-qemu.qcow2
 vm_type: coreos
+vm_memory: 16
 console_port: 2004
 
 netlab_mgmt_source_bridge: br0
