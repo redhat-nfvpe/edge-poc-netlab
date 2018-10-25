@@ -61,3 +61,8 @@
     - job-db-init.yaml
     - job-db-sync.yaml
     - job-rabbit-init.yaml
+    - deployment-api.yaml
+    - service-api.yaml
+    - statefulset-conductor.yaml
+    - service-tftp.yaml
+    - service-http.yaml
