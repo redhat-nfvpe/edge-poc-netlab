@@ -49,3 +49,6 @@
         policy: targeted
         state: permissive
       become: true
+
+    - name: Remount selinux to avoid permissions with containers
+      shell: mount -o remount,ro /sys/fs/selinux
