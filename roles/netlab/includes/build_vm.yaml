@@ -50,3 +50,5 @@
     permanent: true
     state: enabled
     immediate: true
+  when: node.ipmi is defined and node.ipmi.port is defined
+  ignore_errors: True
