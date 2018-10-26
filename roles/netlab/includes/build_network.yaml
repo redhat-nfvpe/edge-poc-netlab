@@ -12,6 +12,7 @@
     - destroy
     - undefine
   when: "'default' in networks.list_nets"
+  ignore_errors: true
 
 - name: add the new default network definition
   virt_net:
