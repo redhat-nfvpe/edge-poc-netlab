@@ -73,6 +73,8 @@ spec:
               value: eth0
             - name: PATH
               value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/
+            - name: DEPENDENCY_SERVICE
+              value: "mysql"
             - name: COMMAND
               value: "echo done"
           command:

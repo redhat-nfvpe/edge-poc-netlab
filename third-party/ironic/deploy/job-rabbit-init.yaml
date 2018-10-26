@@ -77,8 +77,8 @@ spec:
               value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/
             - name: DEPENDENCY_DAEMONSET
               value: ""
-            - name: DEPENDENCY_CONTAINER
-              value: ""
+            - name: DEPENDENCY_SERVICE
+              value: "rabbitmq"
             - name: DEPENDENCY_POD_JSON
               value: ""
             - name: COMMAND
