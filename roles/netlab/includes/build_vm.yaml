@@ -43,3 +43,10 @@
   command: vbmc start {{ vm_name }}
   when: node.ipmi is defined and node.ipmi.port is defined
   ignore_errors: True
+
+- name: open firewall port
+  firewalld:
+    port: "{{ node.ipmi.port }}/udp"
+    permanent: true
+    state: enabled
+    immediate: true
