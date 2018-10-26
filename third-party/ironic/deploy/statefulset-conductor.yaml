@@ -195,7 +195,7 @@ spec:
             - name: pod-data
               mountPath: /var/lib/pod_data
             - name: ironic-images
-              mountPath: /var/lib/mount_ironic_images
+              mountPath: /var/lib/ironic_images
         - name: ironic-conductor-pxe
           image: "docker.io/openstackhelm/ironic:queens"
           imagePullPolicy: IfNotPresent
