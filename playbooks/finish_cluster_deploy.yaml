@@ -34,6 +34,11 @@
       shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl taint nodes --all node-role.kubernetes.io/master:NoSchedule-
       when: masters_result.stdout|int > 0
 
+    - name: Wait for master to be fully functional
+      shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl get scc --no-headers | grep 'restricted' | wc -l
+      register: scc_result
+      until: scc_result.stdout|int > 0
+
     - name: Remove bootstrap vm
       virt:
         name: "server01"
