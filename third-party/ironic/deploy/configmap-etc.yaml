@@ -29,6 +29,7 @@ data:
     public_endpoint = http://ironic:80/
     [conductor]
     api_url = http://ironic-api:6385/
+    automated_clean = False
     [database]
     connection = mysql+pymysql://ironic:password@mysql:3306/ironic
     [deploy]
@@ -50,15 +51,15 @@ data:
     auth_type = None
     [dhcp]
     dhcp_provider = none
-    
+
   policy.json: |
-    {}  
+    {}
   tftp-map-file: |
     re ^(/tftpboot/) /tftpboot/\2
     re ^/tftpboot/ /tftpboot/
     re ^(^/) /tftpboot/\1
     re ^([^/]) /tftpboot/\1
-    
+
   nginx.conf: |
     user  nginx;
     worker_processes  1;
