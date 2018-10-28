@@ -44,11 +44,20 @@
   when: node.ipmi is defined and node.ipmi.port is defined
   ignore_errors: True
 
-- name: open firewall port
+- name: open vbmc firewall port
   firewalld:
     port: "{{ node.ipmi.port }}/udp"
     permanent: true
     state: enabled
     immediate: true
   when: node.ipmi is defined and node.ipmi.port is defined
+  ignore_errors: True
+
+- name: open vnc firewall port
+  firewalld:
+    port: "{{ node.vnc_port }}/tcp"
+    permanent: true
+    state: enabled
+    immediate: true
+  when: node.vnc_port is defined
   ignore_errors: True
