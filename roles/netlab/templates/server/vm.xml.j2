@@ -46,10 +46,25 @@
     {% endif %}
     {% endfor %}
 
+    {% if node.console_port is defined %}
     <serial type='tcp'>
       <source mode='bind' host='0.0.0.0' service='{{ node.console_port }}' tls='no'/>
       <protocol type='telnet'/>
     </serial>
+    {% endif %}
+
+    {% if node.vnc_port is defined %}
+    <serial type='pty'>
+      <source path='/dev/pts/3'/>
+      <alias name='serial0'/>
+    </serial>
+    <console type='pty' tty='/dev/pts/3'>
+      <source path='/dev/pts/3'/>
+      <target type='serial' port='0'/>
+      <alias name='serial0'/>
+    </console>
+    <graphics type='vnc' port='{{ node.vnc_port }}' listen='0.0.0.0' />
+    {% endif %}
 
   </devices>
 </domain>
