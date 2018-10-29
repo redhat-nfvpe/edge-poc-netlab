@@ -4,11 +4,15 @@ kind: Service
 metadata:
   name: ironic-api
 spec:
+  type: NodePort
   ports:
     - name: m-api
+      protocol: TCP
       port: 6385
+      nodePort: 32732
     
   selector:
     release_group: queens
     application: ironic
     component: api
+
