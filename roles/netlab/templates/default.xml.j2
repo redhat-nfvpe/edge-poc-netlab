@@ -13,11 +13,7 @@
       <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-etcd-0</hostname>
       <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}</hostname>
     </host>
-    <srv service='name' protocol='tcp' domain='{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' target='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-etcd-0.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' port='2380' weight='10' >
-    <host ip='{{ netlab_libvirt_default_ip_master0 }}'>
-      <hostname>etcd-server-ssl</hostname>
-    </host>
-    </srv>
+    <srv service='etcd-server-ssl' protocol='tcp' domain='{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' target='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-etcd-0.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' port='2380' weight='10' />
   </dns>
   <ip address='{{ netlab_libvirt_default_dhcp_address }}' netmask='{{ netlab_libvirt_default_dhcp_mask }}'>
     <dhcp>
