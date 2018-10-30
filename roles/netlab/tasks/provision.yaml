@@ -16,6 +16,10 @@
     group: nfsnobody
     mode: 0755
 
+- name: Remove content inside nfs directory
+  shell: /bin/rm -rf /var/nfs/*
+  ignore_errors: true
+
 - name: Generate exports file
   copy:
     dest: /etc/exports
