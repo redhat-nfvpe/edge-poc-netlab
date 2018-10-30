@@ -14,7 +14,7 @@
     - '{"volumes": ["configMap", "downwardAPI", "emptyDir", "hostPath", "persistentVolumeClaim", "projected", "secret", "nfs"]}'
 
 - name: Label master nodes
-  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl label nodes testcluster-api {{ item }}
+  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl label nodes testcluster-master-0 {{ item }}
   with_items:
     - "app=nfs-provisioner"
     - "role=master"
