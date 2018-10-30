@@ -19,7 +19,7 @@
       <range start='{{ netlab_libvirt_default_dhcp_start }}' end='{{ netlab_libvirt_default_dhcp_end }}'/>
       <host mac='52:54:00:cc:cc:01' ip='{{ netlab_libvirt_default_ip_bootstrap }}' name='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-bootstrap' />
       <host mac='52:54:00:cc:cc:02' ip='{{ netlab_libvirt_default_ip_master0 }}' name='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-master-0'/>
-      <host mac='52:54:00:cc:cc:03' ip='{{ netlab_libvirt_default_ip_master1 }}' name='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-master-1/>
+      <host mac='52:54:00:cc:cc:03' ip='{{ netlab_libvirt_default_ip_master1 }}' name='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-master-1' />
       <host mac='52:54:00:cc:cc:04' ip='{{ netlab_libvirt_default_ip_master2 }}' name='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-master-2'/>
       <bootp file='bootstrap.ipxe' server='{{ netlab_libvirt_default_dhcp_address }}' />
     </dhcp>
