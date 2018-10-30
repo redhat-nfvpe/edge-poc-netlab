@@ -4,24 +4,23 @@
   <bridge name='br0' stp='on' delay='0'/>
   <domain name='{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' />
   <dns>
+    <srv service='etcd-server-ssl' protocol='tcp' domain='{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' target='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-etcd-0.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' port='2380' weight='10' />
+
     <host ip='{{ netlab_libvirt_default_ip_bootstrap }}'>
       <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-api</hostname>
     </host>
     <host ip='{{ netlab_libvirt_default_ip_master0 }}'>
-      <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-master-0</hostname>
       <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-api</hostname>
       <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-etcd-0</hostname>
-      <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}</hostname>
     </host>
-    <srv service='etcd-server-ssl' protocol='tcp' domain='{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' target='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-etcd-0.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' port='2380' weight='10' />
   </dns>
   <ip address='{{ netlab_libvirt_default_dhcp_address }}' netmask='{{ netlab_libvirt_default_dhcp_mask }}'>
     <dhcp>
       <range start='{{ netlab_libvirt_default_dhcp_start }}' end='{{ netlab_libvirt_default_dhcp_end }}'/>
-      <host mac='52:54:00:cc:cc:01' ip='{{ netlab_libvirt_default_ip_bootstrap }}' />
-      <host mac='52:54:00:cc:cc:02' ip='{{ netlab_libvirt_default_ip_master0 }}' />
-      <host mac='52:54:00:cc:cc:03' ip='{{ netlab_libvirt_default_ip_master1 }}' />
-      <host mac='52:54:00:cc:cc:04' ip='{{ netlab_libvirt_default_ip_master2 }}' />
+      <host mac='52:54:00:cc:cc:01' ip='{{ netlab_libvirt_default_ip_bootstrap }}' name='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-bootstrap' />
+      <host mac='52:54:00:cc:cc:02' ip='{{ netlab_libvirt_default_ip_master0 }}' name='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-master-0'/>
+      <host mac='52:54:00:cc:cc:03' ip='{{ netlab_libvirt_default_ip_master1 }}' name='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-master-1/>
+      <host mac='52:54:00:cc:cc:04' ip='{{ netlab_libvirt_default_ip_master2 }}' name='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-master-2'/>
       <bootp file='bootstrap.ipxe' server='{{ netlab_libvirt_default_dhcp_address }}' />
     </dhcp>
   </ip>
