@@ -2,6 +2,7 @@
 vm_name: server04
 vm_disk: empty_disk.qcow2
 vm_type: server
+vm_memory: 20
 console_port: 2006
 
 connections:
