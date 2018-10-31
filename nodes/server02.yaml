@@ -8,7 +8,7 @@ vnc_port: 5902
 netlab_mgmt_source_bridge: br0
 mac_address: 52:54:00:cc:cc:02
 start: true
-ignition_name: master-0.ign
+ignition_name: master.ign
 
 ipmi:
   username: admin
