@@ -42,6 +42,7 @@
 
     - name: Remove bootstrap node from cluster
       shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl delete node testcluster-bootstrap
+      ignore_errors: true
 
     - name: Remove bootstrap vm
       virt:
