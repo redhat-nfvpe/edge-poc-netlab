@@ -40,6 +40,9 @@
       register: scc_result
       until: scc_result.stdout|int > 0
 
+    - name: Remove bootstrap node from cluster
+      shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl delete node testcluster-bootstrap
+
     - name: Remove bootstrap vm
       virt:
         name: "server01"
