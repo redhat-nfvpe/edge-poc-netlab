@@ -93,7 +93,7 @@ spec:
             
       containers:
         - name: "ironic-db-sync"
-          image: "docker.io/openstackhelm/ironic:queens"
+          image: "quay.io/yrobla/tripleorocky-centos-binary-ironic-api"
           imagePullPolicy: "IfNotPresent"
           
           command:

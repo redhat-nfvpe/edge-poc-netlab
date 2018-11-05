@@ -31,7 +31,7 @@ data:
     api_url = http://192.168.126.3:32732/
     automated_clean = False
     [database]
-    connection = mysql+pymysql://ironic:password@mysql:3306/ironic
+    connection = mysql+pymysql://ironic:password@mysql:3306/ironic?charset=utf8mb4
     [deploy]
     http_root = /var/lib/pod_data/httpboot
     [inspector]

@@ -4,36 +4,57 @@ kind: ConfigMap
 metadata:
   name: ironic-bin
 data:
-  db-init.sh: |    
-    #!/bin/bash
-    apt-get update
-    apt-get -y install mysql-client
+  db-init.py: |    
+    #!/usr/bin/env python
+    import logging
+    import os
+    from sqlalchemy import create_engine
 
-    # Create database
-    mysql -h ${ROOT_DB_HOST} -u ${ROOT_DB_USER} -p${ROOT_DB_PASSWORD} -e "CREATE DATABASE IF NOT EXISTS ${USER_DB_DATABASE}"
-    echo "Created database ${USER_DB_DATABASE}"
+    # configure logging
+    logger = logging.getLogger('Ironic DB init')
+    logger.setLevel(logging.DEBUG)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG) 
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    ch.setFormatter(formatter) 
+    logger.addHandler(ch)
 
-    # Create user
-    mysql -h ${ROOT_DB_HOST} -u ${ROOT_DB_USER} -p${ROOT_DB_PASSWORD} -e "CREATE USER IF NOT EXISTS ${USER_DB_USER}@'%' IDENTIFIED BY '${USER_DB_PASSWORD}'"
-    echo "Created user ${USER_DB_USER}"
+    # generate connection string for root
+    root_engine_url = "mysql+pymysql://%s:%s@%s:3306/mysql?charset=utf8mb4" % (
+        os.environ['ROOT_DB_USER'],
+        os.environ['ROOT_DB_PASSWORD'],
+        os.environ['ROOT_DB_HOST'])
 
-    # Grant permissions
-    mysql -h ${ROOT_DB_HOST} -u ${ROOT_DB_USER} -p${ROOT_DB_PASSWORD} -e "GRANT ALL PRIVILEGES ON ${USER_DB_DATABASE}.* TO '${USER_DB_USER}'@'%'; FLUSH PRIVILEGES"
-    echo "Granted privileges to ${USER_DB_USER} for ${USER_DB_DATABASE}"
+    try:
+        root_engine = create_engine(root_engine_url)
+    except:
+        logger.critical('Could not connect to database as root user')
+        raise
+
+    try:
+        root_engine.execute("CREATE DATABASE IF NOT EXISTS %s" % os.environ['USER_DB_DATABASE'])
+
+        root_command = "CREATE USER IF NOT EXISTS `{0}`@\'{1}\' IDENTIFIED BY \'{2}\'".format(os.environ['USER_DB_USER'], '%%', os.environ['USER_DB_PASSWORD'])
+        logger.critical(root_command)
+        root_engine.execute(root_command)
+        root_command = "GRANT ALL PRIVILEGES ON `{0}`.* TO \'{1}\'@\'{2}\'".format(os.environ['USER_DB_DATABASE'], os.environ['USER_DB_USER'], '%%')
+        root_engine.execute(root_command)
+    except:
+        logger.critical("Failure creating database and user for ironic")
+        raise
+    logger.info("Finished db management")
 
   db-sync.sh: |
     #!/bin/bash
     set -ex
 
-    pip install --upgrade PyMySQL
+    #pip install --upgrade PyMySQL
 
-    ironic-dbsync upgrade
+    ironic-dbsync --debug --config-file=/etc/ironic/ironic.conf upgrade
 
   ironic-api.sh: |
     #!/bin/bash
     set -ex
-
-    pip install --upgrade PyMySQL
 
     COMMAND="${@:-start}"
     
@@ -52,7 +73,7 @@ data:
     #!/bin/bash
     set -ex
 
-    pip install --upgrade PyMySQL
+    #pip install --upgrade PyMySQL
 
     mkdir -p /var/lib/pod_data/ironic/images
     mkdir -p /var/lib/pod_data/master_images

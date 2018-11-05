@@ -100,7 +100,7 @@ spec:
 
       containers:
         - name: ironic-api
-          image: "docker.io/openstackhelm/ironic:queens"
+          image: "quay.io/yrobla/tripleorocky-centos-binary-ironic-api"
           imagePullPolicy: IfNotPresent
           
           command:

@@ -85,7 +85,7 @@ spec:
       containers:
 
         - name: "ironic-db-init-0"
-          image: docker.io/openstackhelm/heat:queens
+          image: quay.io/yrobla/tripleorocky-centos-binary-ironic-api
           imagePullPolicy: IfNotPresent
           
           env:
@@ -119,11 +119,11 @@ spec:
                   name: "ironic-db-user"
                   key: DB_DATABASE
           command:
-            - /tmp/db-init.sh
+            - /tmp/db-init.py
           volumeMounts:
-            - name: db-init-sh
-              mountPath: /tmp/db-init.sh
-              subPath: db-init.sh
+            - name: db-init-py
+              mountPath: /tmp/db-init.py
+              subPath: db-init.py
               readOnly: true
             - name: etc-service
               mountPath: "/etc/ironic"
@@ -136,7 +136,7 @@ spec:
               subPath: "logging.conf"
               readOnly: true
       volumes:
-        - name: db-init-sh
+        - name: db-init-py
           configMap:
             name: "ironic-bin"
             defaultMode: 0555
