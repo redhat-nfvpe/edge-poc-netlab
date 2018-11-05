@@ -58,9 +58,6 @@ data:
     mkdir -p /var/lib/pod_data/master_images
     mkdir -p /var/lib/pod_data/ironic_images
 
-    # copy images to avoid linking from nfs
-    cp -R /var/lib/ironic_images/* /var/lib/pod_data/ironic_images/
-
     exec ironic-conductor \
           --config-file /etc/ironic/ironic.conf \
           --config-file /tmp/pod-shared/conductor-local-ip.conf

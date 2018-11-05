@@ -194,8 +194,6 @@ spec:
               mountPath: /sys
             - name: pod-data
               mountPath: /var/lib/pod_data
-            - name: ironic-images
-              mountPath: /var/lib/ironic_images
         - name: ironic-conductor-pxe
           image: "docker.io/openstackhelm/ironic:queens"
           imagePullPolicy: IfNotPresent
@@ -218,8 +216,6 @@ spec:
               readOnly: true
             - name: pod-data
               mountPath: /var/lib/pod_data
-            - name: ironic-images
-              mountPath: /var/lib/ironic_images
           ports:
             - containerPort: 69
               hostPort: 69
@@ -240,8 +236,6 @@ spec:
               readOnly: true
             - name: pod-data
               mountPath: /var/lib/pod_data
-            - name: ironic-images
-              mountPath: /var/lib/ironic_images
           ports:
             - containerPort: 8081
               hostPort: 8081
@@ -273,15 +267,4 @@ spec:
             path: /sys
         - name: pod-data
           emptyDir: {}
-        - name: ironic-images
-          persistentVolumeClaim:
-            claimName: ironic-images
-  volumeClaimTemplates:
-  - metadata:
-      name: ironic-images
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage:  5Gi
-      storageClassName: "managed-nfs-storage"
+
