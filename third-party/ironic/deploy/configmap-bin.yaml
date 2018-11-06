@@ -73,8 +73,6 @@ data:
     #!/bin/bash
     set -ex
 
-    #pip install --upgrade PyMySQL
-
     mkdir -p /var/lib/pod_data/ironic/images
     mkdir -p /var/lib/pod_data/master_images
     mkdir -p /var/lib/pod_data/ironic_images
@@ -82,6 +80,7 @@ data:
     exec ironic-conductor \
           --config-file /etc/ironic/ironic.conf \
           --config-file /tmp/pod-shared/conductor-local-ip.conf
+
 
   ironic-conductor-init.sh: |
     #!/bin/bash
@@ -129,10 +128,10 @@ data:
     set -ex
     
     #NOTE(portdirect): this works round a limitation in Kolla images
-    if ! dpkg -l ipxe; then
-      apt-get update
-      apt-get install ipxe -y
-    fi
+    #if ! dpkg -l ipxe; then
+    #  apt-get update
+    #  apt-get install ipxe -y
+    #fi
     
     mkdir -p /var/lib/pod_data/tftpboot
     mkdir -p /var/lib/pod_data/tftpboot/master_images

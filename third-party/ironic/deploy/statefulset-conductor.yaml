@@ -107,7 +107,7 @@ spec:
             null
             
         - name: ironic-conductor-pxe-init
-          image: "docker.io/tripleorocky/centos-binary-ironic-api:current-tripleo"
+          image: "docker.io/tripleorocky/centos-binary-ironic-pxe:current-tripleo"
           imagePullPolicy: IfNotPresent
           command:
             - /tmp/ironic-conductor-pxe-init.sh
@@ -119,7 +119,7 @@ spec:
             - name: pod-data
               mountPath: /var/lib/pod_data
         - name: ironic-conductor-init
-          image: "docker.io/tripleorocky/centos-binary-ironic-api:current-tripleo"
+          image: "quay.io/yrobla/tripleorocky-centos-binary-ironic-conductor"
           imagePullPolicy: IfNotPresent
           
           env:
@@ -135,7 +135,7 @@ spec:
             - name: pod-shared
               mountPath: /tmp/pod-shared
         - name: ironic-conductor-http-init
-          image: "docker.io/tripleorocky/centos-binary-ironic-api:current-tripleo"
+          image: "quay.io/yrobla/tripleorocky-centos-binary-ironic-conductor"
           imagePullPolicy: IfNotPresent
           
           env:
@@ -156,7 +156,7 @@ spec:
               mountPath: /tmp/pod-shared
       containers:
         - name: ironic-conductor
-          image: "docker.io/tripleorocky/centos-binary-ironic-api:current-tripleo"
+          image: "quay.io/yrobla/tripleorocky-centos-binary-ironic-conductor"
           imagePullPolicy: IfNotPresent
           
           securityContext:
@@ -195,7 +195,7 @@ spec:
             - name: pod-data
               mountPath: /var/lib/pod_data
         - name: ironic-conductor-pxe
-          image: "docker.io/tripleorocky/centos-binary-ironic-api:current-tripleo"
+          image: "docker.io/tripleorocky/centos-binary-ironic-pxe:current-tripleo"
           imagePullPolicy: IfNotPresent
           
           securityContext:
