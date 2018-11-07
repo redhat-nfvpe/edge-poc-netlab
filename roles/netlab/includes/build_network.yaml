@@ -4,9 +4,9 @@
     command: list_nets
   register: networks
 
-- name: stop and remove the default network
+- name: stop and remove the cluster network
   virt_net:
-    name: default
+    name: cluster
     command: "{{ item }}"
   with_items:
     - destroy
@@ -16,12 +16,12 @@
 
 - name: add the new default network definition
   virt_net:
-    name: default
+    name: cluster
     command: define
-    xml: "{{ lookup('template', 'templates/default.xml.j2') }}"
+    xml: "{{ lookup('template', 'templates/cluster.xml.j2') }}"
 
-- name: start the default network
+- name: start the cluster network
   virt_net:
-    name: default
+    name: cluster
     command: start
     autostart: yes
