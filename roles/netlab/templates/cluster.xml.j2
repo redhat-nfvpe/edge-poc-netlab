@@ -1,8 +1,10 @@
 <network>
   <name>cluster</name>
-  <forward mode='nat'> </forward>
+  <forward mode='nat'>
+    <port start='1024' end='65535'/>
+  </forward>
   <bridge name='br0' stp='on' delay='0'/>
-  <domain name='{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' />
+  <domain name='{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' localOnly='yes' />
   <dns>
     <srv service='etcd-server-ssl' protocol='tcp' domain='{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' target='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-etcd-0.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' port='2380' weight='10' />
 
@@ -13,8 +15,11 @@
       <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-api</hostname>
       <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-etcd-0</hostname>
     </host>
+    <host ip='192.168.126.50'>
+      <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}</hostname>
+    </host>
   </dns>
-  <ip address='{{ netlab_libvirt_default_dhcp_address }}' netmask='{{ netlab_libvirt_default_dhcp_mask }}'>
+  <ip family="ipv4" address='{{ netlab_libvirt_default_dhcp_address }}' netmask='{{ netlab_libvirt_default_dhcp_mask }}'>
     <dhcp>
       <range start='{{ netlab_libvirt_default_dhcp_start }}' end='{{ netlab_libvirt_default_dhcp_end }}'/>
       <host mac='52:54:00:cc:cc:01' ip='{{ netlab_libvirt_default_ip_bootstrap }}' name='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-bootstrap' />
