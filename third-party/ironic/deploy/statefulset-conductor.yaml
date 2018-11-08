@@ -162,7 +162,7 @@ spec:
               mountPath: /tmp/pod-shared
       containers:
         - name: ironic-conductor
-          image: "docker.io/tripleorocky/centos-binary-ironic-conductor:current-tripleo"
+          image: "quay.io/yrobla/tripleorocky-centos-binary-ironic-conductor"
           imagePullPolicy: IfNotPresent
           
           securityContext:
@@ -187,18 +187,6 @@ spec:
               mountPath: /etc/ironic/logging.conf
               subPath: logging.conf
               readOnly: true
-            - name: ironic-etc
-              mountPath: /etc/ironic/policy.json
-              subPath: policy.json
-              readOnly: true
-            - name: host-var-lib-ironic
-              mountPath: /var/lib/ironic
-            - name: host-run
-              mountPath: /var/run
-            - name: host-dev
-              mountPath: /dev
-            - name: host-sys
-              mountPath: /sys
             - name: pod-data
               mountPath: /var/lib/pod_data
         - name: ironic-conductor-pxe
