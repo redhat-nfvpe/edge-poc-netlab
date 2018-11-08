@@ -8,12 +8,12 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
-  name: queens-ironic-conductor
+  name: rocky-ironic-conductor
   namespace: default
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: queens-default-ironic-conductor
+  name: rocky-default-ironic-conductor
 subjects:
   - kind: ServiceAccount
     name: ironic-conductor
@@ -22,7 +22,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
-  name: queens-default-ironic-conductor
+  name: rocky-default-ironic-conductor
   namespace: default
 rules:
   - apiGroups:
@@ -44,7 +44,7 @@ kind: StatefulSet
 metadata:
   name: ironic-conductor
   labels:
-    release_group: queens
+    release_group: rocky
     application: ironic
     component: conductor
 spec:
@@ -52,13 +52,13 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      release_group: queens
+      release_group: rocky
       application: ironic
       component: conductor
   template:
     metadata:
       labels:
-        release_group: queens
+        release_group: rocky 
         application: ironic
         component: conductor
     spec:

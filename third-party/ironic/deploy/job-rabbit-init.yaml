@@ -8,12 +8,12 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
-  name: queens-ironic-rabbit-init
+  name: rocky-ironic-rabbit-init
   namespace: default
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: queens-default-ironic-rabbit-init
+  name: rocky-default-ironic-rabbit-init
 subjects:
   - kind: ServiceAccount
     name: ironic-rabbit-init
@@ -22,7 +22,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
-  name: queens-default-ironic-rabbit-init
+  name: rocky-default-ironic-rabbit-init
   namespace: default
 rules:
   - apiGroups:
@@ -45,7 +45,7 @@ spec:
   template:
     metadata:
       labels:
-        release_group: queens
+        release_group: rocky 
         application: ironic
         component: rabbit-init
     spec:

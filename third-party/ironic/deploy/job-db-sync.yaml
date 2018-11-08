@@ -8,12 +8,12 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
-  name: queens-ironic-db-sync
+  name: rocky-ironic-db-sync
   namespace: default
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: queens-default-ironic-db-sync
+  name: rocky-default-ironic-db-sync
 subjects:
   - kind: ServiceAccount
     name: ironic-db-sync
@@ -22,7 +22,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
-  name: queens-default-ironic-db-sync
+  name: rocky-default-ironic-db-sync
   namespace: default
 rules:
   - apiGroups:
@@ -47,7 +47,7 @@ spec:
   template:
     metadata:
       labels:
-        release_group: queens
+        release_group: rocky 
         application: ironic
         component: db-sync
     spec:

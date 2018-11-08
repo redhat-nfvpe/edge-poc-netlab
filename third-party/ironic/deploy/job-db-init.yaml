@@ -8,12 +8,12 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
-  name: queens-ironic-db-init
+  name: rocky-ironic-db-init
   namespace: default
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: queens-default-ironic-db-init
+  name: rocky-default-ironic-db-init
 subjects:
   - kind: ServiceAccount
     name: ironic-db-init
@@ -22,7 +22,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
-  name: queens-default-ironic-db-init
+  name: rocky-default-ironic-db-init
   namespace: default
 rules:
   - apiGroups:
@@ -45,7 +45,7 @@ spec:
   template:
     metadata:
       labels:
-        release_group: queens
+        release_group: rocky 
         application: ironic
         component: db-init
     spec:
@@ -90,9 +90,15 @@ spec:
           
           env:
             - name: ROOT_DB_HOST
-              value: "mysql"
+              valueFrom:
+                secretKeyRef:
+                  name: "mysql-root-credentials"
+                  key: ROOT_DB_HOST
             - name: ROOT_DB_USER
-              value: "root"
+              valueFrom:
+                secretKeyRef:
+                  name: "mysql-root-credentials"
+                  key: ROOT_DB_USER
             - name: ROOT_DB_PASSWORD
               valueFrom:
                 secretKeyRef:

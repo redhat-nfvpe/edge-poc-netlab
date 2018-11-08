@@ -12,7 +12,7 @@ spec:
       nodePort: 32732
     
   selector:
-    release_group: queens
+    release_group: rocky
     application: ironic
     component: api
 

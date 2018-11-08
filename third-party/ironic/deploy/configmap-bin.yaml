@@ -24,6 +24,7 @@ data:
         os.environ['ROOT_DB_USER'],
         os.environ['ROOT_DB_PASSWORD'],
         os.environ['ROOT_DB_HOST'])
+    logger.critical(root_engine_url)
 
     try:
         root_engine = create_engine(root_engine_url)
