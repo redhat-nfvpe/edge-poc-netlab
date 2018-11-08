@@ -48,6 +48,7 @@
       virt:
         name: "server01"
         state: destroyed
+      ignore_errors: true
 
 - name: Disable selinux on master
   hosts: master_host
