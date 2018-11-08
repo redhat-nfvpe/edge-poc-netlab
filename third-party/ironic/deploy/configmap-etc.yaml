@@ -28,7 +28,7 @@ data:
     port = 6385
     public_endpoint = http://ironic:80/
     [conductor]
-    api_url = http://192.168.126.3:32732/
+    api_url = http://192.168.126.11:32732/
     automated_clean = False
     [database]
     connection = mysql+pymysql://ironic:password@mysql:3306/ironic?charset=utf8mb4

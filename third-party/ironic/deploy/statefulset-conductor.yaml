@@ -123,8 +123,11 @@ spec:
           imagePullPolicy: IfNotPresent
           
           env:
-            - name: PXE_IP
-              value: 192.168.126.3
+            - name: PXE_NIC
+              valueFrom:
+                configMapKeyRef:
+                  name: pxe-settings
+                  key: PXE_NIC
           command:
             - /tmp/ironic-conductor-init.sh
           volumeMounts:
@@ -139,8 +142,11 @@ spec:
           imagePullPolicy: IfNotPresent
           
           env:
-            - name: PXE_IP
-              value: 192.168.126.3
+            - name: PXE_NIC
+              valueFrom:
+                configMapKeyRef:
+                  name: pxe-settings
+                  key: PXE_NIC
           command:
             - /tmp/ironic-conductor-http-init.sh
           volumeMounts:
@@ -156,11 +162,12 @@ spec:
               mountPath: /tmp/pod-shared
       containers:
         - name: ironic-conductor
-          image: "quay.io/yrobla/tripleorocky-centos-binary-ironic-conductor"
+          image: "docker.io/tripleorocky/centos-binary-ironic-conductor:current-tripleo"
           imagePullPolicy: IfNotPresent
           
           securityContext:
             privileged: true
+            runAsUser: 0
           command:
             - /tmp/ironic-conductor.sh
           volumeMounts:
@@ -201,8 +208,11 @@ spec:
           securityContext:
             privileged: true
           env:
-            - name: PXE_IP
-              value: 192.168.126.3
+            - name: PXE_NIC
+              valueFrom:
+                configMapKeyRef:
+                  name: pxe-settings
+                  key: PXE_NIC
           command:
             - /tmp/ironic-conductor-pxe.sh
           volumeMounts:
