@@ -26,38 +26,3 @@
     command: define
     xml: "{{ lookup('template', 'templates/{{ node.vm_type }}/vm.xml.j2') }}"
   when: vm_name not in running_vms.list_vms
-
-- name: start all virtual machines
-  virt:
-    command: start
-    name: "{{ vm_name }}"
-  when: vm_name not in running_vms.list_vms and node.start|bool == True
-
-- name: add vbmc if needed
-  command: >
-    vbmc add {{vm_name}} --port {{ node.ipmi.port }} {% if node.ipmi.username is defined %}--username {{ node.ipmi.username }}{% endif %} {% if node.ipmi.password is defined %}--password {{ node.ipmi.password }}{% endif %}
-  when: node.ipmi is defined and node.ipmi.port is defined
-  ignore_errors: True
-
-- name: start vbmc if it was created
-  command: vbmc start {{ vm_name }}
-  when: node.ipmi is defined and node.ipmi.port is defined
-  ignore_errors: True
-
-- name: open vbmc firewall port
-  firewalld:
-    port: "{{ node.ipmi.port }}/udp"
-    permanent: true
-    state: enabled
-    immediate: true
-  when: node.ipmi is defined and node.ipmi.port is defined
-  ignore_errors: True
-
-- name: open vnc firewall port
-  firewalld:
-    port: "{{ node.vnc_port }}/tcp"
-    permanent: true
-    state: enabled
-    immediate: true
-  when: node.vnc_port is defined
-  ignore_errors: True

@@ -30,6 +30,10 @@
   include_tasks: includes/build_node.yaml
   with_dict: "{{ nodes }}"
 
+- name: start nodes
+  include_tasks: includes/start_node.yaml
+  with_dict: "{{ nodes }}"
+
 - name: shutdown and remove unknown network virtual machine
   include_tasks: includes/remove_vm.yaml
   loop: "{{ running_vms.list_vms }}"
