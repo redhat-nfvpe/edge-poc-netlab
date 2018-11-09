@@ -14,10 +14,10 @@ spec:
       hostNetwork: true
       initContainers:
         - name: dhcp-server-init
-          image: networkboot/dhcpd:latest
+          image: docker.io/tripleorocky/centos-binary-ironic-pxe:current-tripleo
           imagePullPolicy: Always
           command:
-            - /tmp/dhcp-server-init.sh
+            - /tmp/scripts/dhcp-server-init.sh
           env:
             - name: PXE_NIC
               valueFrom:
@@ -29,42 +29,49 @@ spec:
                 configMapKeyRef:
                   name: dhcp-hosts
                   key: DHCP_HOSTS
+            - name: CLUSTER_DOMAIN
+              valueFrom:
+                configMapKeyRef:
+                  name: pxe-settings
+                  key: CLUSTER_DOMAIN
+            - name: INITIAL_IP_RANGE
+              valueFrom:
+                configMapKeyRef:
+                  name: pxe-settings
+                  key: INITIAL_IP_RANGE
+            - name: FINAL_IP_RANGE
+              valueFrom:
+                configMapKeyRef:
+                  name: pxe-settings
+                  key: FINAL_IP_RANGE
           volumeMounts:
             - name: dhcp-bin
-              mountPath: /tmp/dhcp-server-init.sh
-              subPath: dhcp-server-init.sh
+              mountPath: /tmp/scripts/
               readOnly: true
             - name: dhcp-hosts
               mountPath: /data/hosts/
-            - name: pod-data
-              mountPath: /var/lib/pod_data
+            - name: dhcp-zones
+              mountPath: /data/zones/
       containers:
         - name: dhcp-server
-          image: networkboot/dhcpd:latest
+          image: docker.io/tripleorocky/centos-binary-ironic-pxe:current-tripleo
           imagePullPolicy: Always
-          #command: ["/bin/bash"]
-          #args: ["-c", "while true; do echo hello; sleep 10;done"]
+          command:
+            - /tmp/scripts/dhcp-server.sh
           ports:
             - containerPort: 67
               hostPort: 67
               protocol: UDP
           volumeMounts:
+            - name: dhcp-bin
+              mountPath: /tmp/scripts/
             - name: dhcp-etc
               mountPath: /data/dhcpd.conf
               subPath: mymounts/dhcpd.conf
-            - name: dhcp-etc
-              mountPath: /data/provisioning_zone.conf
-              subPath: mymounts/provisioning_zone.conf
+            - name: dhcp-zones
+              mountPath: /data/zones/
             - name: dhcp-hosts
               mountPath: /data/hosts/
-            - name: pod-data
-              mountPath: /var/lib/pod_data
-          env:
-            - name: PXE_NIC
-              valueFrom:
-                configMapKeyRef:
-                  name: pxe-settings
-                  key: PXE_NIC
       volumes:
         - name: dhcp-bin
           configMap:
@@ -77,9 +84,7 @@ spec:
             items:
              - key: dhcp-config
                path: mymounts/dhcpd.conf
-             - key: provisioning-config
-               path: mymounts/provisioning_zone.conf
-        - name: pod-data
-          emptyDir: {}
         - name: dhcp-hosts
+          emptyDir: {}
+        - name: dhcp-zones
           emptyDir: {}
