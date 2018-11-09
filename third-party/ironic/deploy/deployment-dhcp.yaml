@@ -1,0 +1,85 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: dhcp-server
+  labels:
+    app: dhcp-server
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: dhcp-server
+    spec:
+      hostNetwork: true
+      initContainers:
+        - name: dhcp-server-init
+          image: networkboot/dhcpd:latest
+          imagePullPolicy: Always
+          command:
+            - /tmp/dhcp-server-init.sh
+          env:
+            - name: PXE_NIC
+              valueFrom:
+                configMapKeyRef:
+                  name: pxe-settings
+                  key: PXE_NIC
+            - name: DHCP_HOSTS
+              valueFrom:
+                configMapKeyRef:
+                  name: dhcp-hosts
+                  key: DHCP_HOSTS
+          volumeMounts:
+            - name: dhcp-bin
+              mountPath: /tmp/dhcp-server-init.sh
+              subPath: dhcp-server-init.sh
+              readOnly: true
+            - name: dhcp-hosts
+              mountPath: /data/hosts/
+            - name: pod-data
+              mountPath: /var/lib/pod_data
+      containers:
+        - name: dhcp-server
+          image: networkboot/dhcpd:latest
+          imagePullPolicy: Always
+          #command: ["/bin/bash"]
+          #args: ["-c", "while true; do echo hello; sleep 10;done"]
+          ports:
+            - containerPort: 67
+              hostPort: 67
+              protocol: UDP
+          volumeMounts:
+            - name: dhcp-etc
+              mountPath: /data/dhcpd.conf
+              subPath: mymounts/dhcpd.conf
+            - name: dhcp-etc
+              mountPath: /data/provisioning_zone.conf
+              subPath: mymounts/provisioning_zone.conf
+            - name: dhcp-hosts
+              mountPath: /data/hosts/
+            - name: pod-data
+              mountPath: /var/lib/pod_data
+          env:
+            - name: PXE_NIC
+              valueFrom:
+                configMapKeyRef:
+                  name: pxe-settings
+                  key: PXE_NIC
+      volumes:
+        - name: dhcp-bin
+          configMap:
+            name: dhcp-bin
+            defaultMode: 0555
+        - name: dhcp-etc
+          configMap:
+            name: dhcp-etc
+            defaultMode: 0444
+            items:
+             - key: dhcp-config
+               path: mymounts/dhcpd.conf
+             - key: provisioning-config
+               path: mymounts/provisioning_zone.conf
+        - name: pod-data
+          emptyDir: {}
+        - name: dhcp-hosts
+          emptyDir: {}

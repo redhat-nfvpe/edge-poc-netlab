@@ -241,3 +241,19 @@ data:
       echo "${RABBITMQ_AUXILIARY_CONFIGURATION}" > /tmp/rmq_definitions.json
       rabbitmqadmin_cli import /tmp/rmq_definitions.json
     fi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dhcp-bin
+data:
+  dhcp-server-init.sh: |
+    #!/bin/bash
+    set -ex
+
+    # strip hosts in lines and output content
+    COUNTER=1
+    while read -r line; do
+      echo "host host${COUNTER} { hardware ethernet ${line}}" >> /data/hosts/hosts.conf    
+      COUNTER=$[$COUNTER+1]
+    done <<< "${DHCP_HOSTS}"

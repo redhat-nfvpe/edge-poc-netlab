@@ -1,5 +1,0 @@
-How to deploy
-=============
-kubectl apply -f configmap.yaml
-kubectl apply -f dhcp-service.yaml
-kubectl apply -f deployment.yaml
