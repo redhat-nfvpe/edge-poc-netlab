@@ -15,7 +15,7 @@
       <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-api</hostname>
       <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-etcd-0</hostname>
     </host>
-    <host ip='192.168.126.50'>
+    <host ip='192.168.126.0'>
       <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}</hostname>
     </host>
   </dns>
