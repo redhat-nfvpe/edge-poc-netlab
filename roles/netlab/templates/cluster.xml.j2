@@ -6,7 +6,7 @@
   <bridge name='br0' stp='on' delay='0'/>
   <domain name='{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' localOnly='yes' />
   <dns>
-    <srv service='etcd-server-ssl' protocol='tcp' domain='{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' target='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-etcd-0.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' port='2380' weight='10' />
+    <srv service='etcd-server-ssl' protocol='tcp' domain='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' target='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-etcd-0.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' port='2380' weight='10' />
 
     <host ip='{{ netlab_libvirt_default_ip_bootstrap }}'>
       <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-api</hostname>
