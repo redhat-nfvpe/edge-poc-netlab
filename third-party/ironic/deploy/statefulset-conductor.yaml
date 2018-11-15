@@ -168,24 +168,19 @@ spec:
           securityContext:
             privileged: true
             runAsUser: 0
-          env:
-            - name: PXE_NIC
-              valueFrom:
-                configMapKeyRef:
-                  name: pxe-settings
-                  key: PXE_NIC
           command:
-            - /tmp/scripts/ironic-conductor.sh
+            - /tmp/ironic-conductor.sh
           volumeMounts:
             - name: ironic-bin
-              mountPath: /tmp/scripts/
+              mountPath: /tmp/ironic-conductor.sh
+              subPath: ironic-conductor.sh
               readOnly: true
             - name: pod-shared
               mountPath: /tmp/pod-shared
             - name: pod-var-cache-ironic
               mountPath: /var/cache/ironic
             - name: ironic-etc
-              mountPath: /tmp/ironic.conf.bak
+              mountPath: /etc/ironic/ironic.conf
               subPath: ironic.conf
               readOnly: true
             - name: ironic-etc

@@ -12,7 +12,6 @@ spec:
         app: dhcp-server
     spec:
       hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
       initContainers:
         - name: dhcp-server-init
           image: docker.io/tripleorocky/centos-binary-ironic-pxe:current-tripleo
