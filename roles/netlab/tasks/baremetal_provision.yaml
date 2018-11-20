@@ -58,4 +58,4 @@
       - operator.yaml
 
 - name: Apply ironic CRD
-  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'WORKSPACE') }}/ironic-operator/deploy/crds/ironic_v1alpha1_ironicapi_crd.yaml
+  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'WORKSPACE') }}/ironic-operator/deploy/crds/ironic_v1alpha1_ironicapi_cr.yaml
