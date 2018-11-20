@@ -43,6 +43,23 @@
     - rabbitmq_rbac.yaml
     - rabbitmq_statefulsets.yaml
 
+- name: Deploy the ironic operator
+  git:
+      repo: 'https://github.com/redhat-nfvpe/ironic-operator.git'
+      dest: "/{{ lookup('env', 'WORKSPACE') }}/ironic-operator"
+
+- name: Install operator files
+  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ loolup('env', 'WORKSPACE') }}/ironic-operator/deploy/{{ item }}
+  with_items:
+      - crds/ironic_v1alpha1_ironicapi_crd.yaml
+      - service_account.yaml
+      - role.yaml
+      - role_binding.yaml
+      - operator.yaml
+
+- name: Apply ironic CRD
+  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ loolup('env', 'WORKSPACE') }}/ironic-operator/deploy/crds/ironic_v1alpha1_ironicapi_crd.yaml
+
 - name: Deploy the ironic manifests
   shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'WORKSPACE') }}/edge-poc-netlab/third-party/ironic/deploy/
 
