@@ -49,7 +49,7 @@
       dest: "/{{ lookup('env', 'WORKSPACE') }}/ironic-operator"
 
 - name: Install operator files
-  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ loolup('env', 'WORKSPACE') }}/ironic-operator/deploy/{{ item }}
+  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'WORKSPACE') }}/ironic-operator/deploy/{{ item }}
   with_items:
       - crds/ironic_v1alpha1_ironicapi_crd.yaml
       - service_account.yaml
@@ -58,8 +58,4 @@
       - operator.yaml
 
 - name: Apply ironic CRD
-  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ loolup('env', 'WORKSPACE') }}/ironic-operator/deploy/crds/ironic_v1alpha1_ironicapi_crd.yaml
-
-- name: Deploy the ironic manifests
-  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'WORKSPACE') }}/edge-poc-netlab/third-party/ironic/deploy/
-
+  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'WORKSPACE') }}/ironic-operator/deploy/crds/ironic_v1alpha1_ironicapi_crd.yaml
