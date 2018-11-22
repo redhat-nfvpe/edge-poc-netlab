@@ -18,7 +18,7 @@
   with_items:
     - "app=nfs-provisioner"
     - "role=master"
-    - "openstack-control-plane=enabled"
+    - "ironic-control-plane=enabled"
   ignore_errors: true
 
 - name: Deploy the NFS manifests
@@ -52,10 +52,14 @@
   shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'WORKSPACE') }}/ironic-operator/deploy/{{ item }}
   with_items:
       - crds/ironic_v1alpha1_ironicapi_crd.yaml
+      - crds/ironic_v1alpha1_ironicconductor_crd.yaml
       - service_account.yaml
       - role.yaml
       - role_binding.yaml
       - operator.yaml
 
-- name: Apply ironic CRD
+- name: Apply ironic API CR
   shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'WORKSPACE') }}/ironic-operator/deploy/crds/ironic_v1alpha1_ironicapi_cr.yaml
+
+- name: Apply ironic conductor CR
+  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'W      ORKSPACE') }}/ironic-operator/deploy/crds/ironic_v1alpha1_ironicconductor_cr.yaml
