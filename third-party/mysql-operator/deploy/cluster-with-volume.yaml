@@ -1,10 +1,20 @@
 ---
+apiVersion: v1
+kind: Secret
+metadata:
+    name: mysql-cluster-root-password
+type: Opaque
+data:
+    password: bXlzcWwK       # password
+---
 apiVersion: mysql.oracle.com/v1alpha1
 kind: Cluster
 metadata:
   name: ironic-mysql
 spec:
   members: 1
+  rootPasswordSecret:
+      name: mysql-cluster-root-password
   volumeClaimTemplate:
     metadata:
       name: data
