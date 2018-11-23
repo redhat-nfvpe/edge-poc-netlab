@@ -38,6 +38,10 @@
     - mysql-deployment.yaml
     - cluster-with-volume.yaml
 
+- name: Give it some time to spin up cluster ...
+  pause:
+      minutes: 1
+
 - name: Wait for mysql to be up
   shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl get services --no-headers | grep 'mysql' | wc -l
   register: mysql_result
@@ -48,6 +52,10 @@
   with_items:
     - rabbitmq_rbac.yaml
     - rabbitmq_statefulsets.yaml
+
+- name: Give it some time to spin up cluster ...
+  pause:
+      minutes: 1
 
 - name: Deploy the ironic operator
   git:
