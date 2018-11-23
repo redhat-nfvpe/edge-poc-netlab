@@ -5,7 +5,7 @@ metadata:
     name: mysql-cluster-root-password
 type: Opaque
 data:
-    password: bXlzcWwK       # password
+    password: cGFzc3dvcmQ=       # password
 ---
 apiVersion: mysql.oracle.com/v1alpha1
 kind: Cluster
