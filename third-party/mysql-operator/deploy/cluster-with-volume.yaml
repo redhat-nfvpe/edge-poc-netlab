@@ -2,7 +2,7 @@
 apiVersion: mysql.oracle.com/v1alpha1
 kind: Cluster
 metadata:
-  name: mysql
+  name: ironic-mysql
 spec:
   members: 1
   volumeClaimTemplate:

@@ -36,6 +36,7 @@
     - custom-resource-definitions.yaml
     - role-agent.yaml
     - mysql-deployment.yaml
+    - cluster-with-volume.yaml
 
 - name: Deploy the rabbitmq manifests
   shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'WORKSPACE') }}/edge-poc-netlab/third-party/rabbitmq/deploy/{{ item }}
