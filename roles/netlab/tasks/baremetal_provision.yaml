@@ -38,6 +38,11 @@
     - mysql-deployment.yaml
     - cluster-with-volume.yaml
 
+- name: Wait for mysql to be up
+  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl get services --no-headers | grep 'mysql' | wc -l
+  register: mysql_result
+  until: mysql_result.stdout|int > 0
+
 - name: Deploy the rabbitmq manifests
   shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'WORKSPACE') }}/edge-poc-netlab/third-party/rabbitmq/deploy/{{ item }}
   with_items:
