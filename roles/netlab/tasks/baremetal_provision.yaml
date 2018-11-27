@@ -82,6 +82,7 @@
       - role_binding.yaml
       - operator.yaml
       - credentials.yaml
+      - settings.yaml
 
 - name: Apply ironic API CR
   shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'WORKSPACE') }}/ironic-operator/deploy/crds/ironic_v1alpha1_ironicapi_cr.yaml
