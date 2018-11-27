@@ -120,14 +120,12 @@ spec:
             - key: enabled_plugins
               path: enabled_plugins
   volumeClaimTemplates:
-    metadata:
-        name: data
-    spec:
+    - metadata:
+          name: data
+      spec:
         storeClassName: "managed-nfs-storage"
         accessModes:
           - ReadWritemany
         resources:
             requests:
                 storage: 1Gi
-
-
