@@ -110,6 +110,8 @@ spec:
         volumeMounts:
           - name: rabbit-data
             mountPath: /var/lib/rabbitmq
+          - name: config-volume
+            mountPath: /etc/rabbitmq
       volumes:
         - name: config-volume
           configMap:
