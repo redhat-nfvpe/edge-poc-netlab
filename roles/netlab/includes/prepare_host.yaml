@@ -43,7 +43,7 @@
     state: present
 
 - name: NGINX container
-  docker:
+  docker_container:
     name: mynginx1
     image: nginx
     state: started
