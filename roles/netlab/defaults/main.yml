@@ -18,6 +18,7 @@ netlab_packages:
   - python-netaddr
   - ansible
   - telnet
+  - python-docker-py
 
 
 netlab_virt_base_path: /virt
