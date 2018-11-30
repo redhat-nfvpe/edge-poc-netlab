@@ -40,7 +40,7 @@
 
 - name: NGINX container
   docker_container:
-    name: mynginx1
+    name: nginx
     image: nginx
     state: started
     ports:
