@@ -20,6 +20,7 @@ netlab_packages:
   - telnet
   - docker-ce
   - python-docker-py
+  - kubectl
 
 
 netlab_virt_base_path: /virt
