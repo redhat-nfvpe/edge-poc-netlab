@@ -18,6 +18,7 @@ netlab_packages:
   - python-netaddr
   - ansible
   - telnet
+  - docker-ce
   - python-docker-py
 
 

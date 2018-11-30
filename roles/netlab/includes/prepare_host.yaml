@@ -10,6 +10,7 @@
     name: "{{ netlab_packages }}"
     state: present
   when: inventory_hostname != 'localhost'
+  ignore_errors: yes
 
 - name: start required services
   service:
@@ -36,11 +37,6 @@
   with_items:
     - "/etc/nginx"
     - "/srv/nginx/images"
-
-- name: Install Docker
-  yum:
-    name: docker
-    state: present
 
 - name: NGINX container
   docker_container:
