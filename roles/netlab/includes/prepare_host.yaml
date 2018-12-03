@@ -99,6 +99,7 @@
     permanent: true
     zone: public
     service: "{{ item }}"
+    state: present
   with_items:
     - nfs
     - mountd
