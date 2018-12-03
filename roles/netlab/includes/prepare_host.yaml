@@ -96,10 +96,10 @@
 
 - name: NFS firewall rules
   firewalld:
-    permanent: true
     zone: public
     service: "{{ item }}"
+    permanent: true
     state: present
   with_items:
-    - nfs
-    - mountd
+    - "nfs"
+    - "mountd"
