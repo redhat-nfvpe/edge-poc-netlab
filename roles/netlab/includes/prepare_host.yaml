@@ -99,7 +99,13 @@
     zone: public
     service: "{{ item }}"
     permanent: true
-    state: present
+    state: enabled
   with_items:
     - "nfs"
     - "mountd"
+
+- name: NFS firewall zone state
+  firewalld:
+    zone: public
+    state: present
+    permanent: true
