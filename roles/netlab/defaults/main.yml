@@ -21,6 +21,7 @@ netlab_packages:
   - docker-ce
   - python-docker-py
   - kubectl
+  - nfs-utils
 
 
 netlab_virt_base_path: /virt

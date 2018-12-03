@@ -72,3 +72,33 @@
       - https://packages.cloud.google.com/yum/doc/yum-key.gpg
       - https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
     state: present
+
+- name: Add entry in /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    regexp: '^192'
+    line: '192.168.126.3 testcluster-api.edge.testing'
+
+- name: Add NFS server exports
+  lineinfile:
+    path: /etc/exports
+    line: '/var/nfs *(rw,no_root_squash,sync)'
+
+- name: Enable/start NFS services
+  systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: True
+  with_items:
+    - "nfs-server"
+    - "nfs-lock"
+    - "nfs-idmap"
+
+- name: NFS firewall rules
+  firewalld:
+    permanent: true
+    zone: public
+    service: "{{ item }}"
+  with_items:
+    - nfs
+    - mountd
