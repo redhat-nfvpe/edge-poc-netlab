@@ -11,7 +11,7 @@
 
     - name: wait until credentials file is populated
       wait_for:
-        path: /var/opt/tectonic/auth/kubeconfig
+        path: /var/opt/openshift/auth/kubeconfig
 
     - name: copy credential of the cluster locally
       fetch:
