@@ -75,8 +75,7 @@
 - name: Install operator files
   shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'WORKSPACE') }}/ironic-operator/deploy/{{ item }}
   with_items:
-      - crds/ironic_v1alpha1_ironicapi_crd.yaml
-      - crds/ironic_v1alpha1_ironicconductor_crd.yaml
+      - crds/ironic_v1alpha1_ironic_crd.yaml
       - service_account.yaml
       - role.yaml
       - role_binding.yaml
@@ -84,8 +83,5 @@
       - credentials.yaml
       - settings.yaml
 
-- name: Apply ironic API CR
-  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'WORKSPACE') }}/ironic-operator/deploy/crds/ironic_v1alpha1_ironicapi_cr.yaml
-
-- name: Apply ironic conductor CR
-  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'WORKSPACE') }}/ironic-operator/deploy/crds/ironic_v1alpha1_ironicconductor_cr.yaml
+- name: Apply ironic CR
+  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'WORKSPACE') }}/ironic-operator/deploy/crds/ironic_v1alpha1_ironic_cr.yaml
