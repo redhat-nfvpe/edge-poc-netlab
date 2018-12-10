@@ -15,7 +15,7 @@
 
     - name: copy credential of the cluster locally
       fetch:
-        src: /var/opt/tectonic/auth/kubeconfig
+        src: /var/opt/openshift/auth/kubeconfig
         dest: "{{ lookup('env', 'WORKSPACE') }}/"
         flat: true
       become: true
