@@ -28,5 +28,5 @@ platform:
 pullSecret: '#PULL_SECRET#'
 
 sshKey: |
-  #SSH_KEYS#
+#SSH_KEYS#
 
