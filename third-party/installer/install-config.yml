@@ -27,6 +27,5 @@ platform:
       ipRange: 192.168.126.0/24
 pullSecret: '#PULL_SECRET#'
 
-sshKey: |
-#SSH_KEYS#
+sshKey: ! "#SSH_KEYS#"
 
