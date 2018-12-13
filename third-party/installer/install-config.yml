@@ -1,0 +1,32 @@
+baseDomain: edge.testing
+clusterID: f54c073e-f9ec-4085-91ab-eea204cc0cdb
+machines:
+- name: master
+  platform: {}
+  replicas: 1
+- name: worker
+  platform: {}
+  replicas: 1
+metadata:
+  creationTimestamp: null
+  name: testcluster
+networking:
+  clusterNetworks:
+  - cidr: 10.128.0.0/14
+    hostSubnetLength: 9
+  serviceCIDR: 172.30.0.0/16
+  type: OpenshiftSDN
+platform:
+  libvirt:
+    URI: qemu+tcp://192.168.122.1/system
+    defaultMachinePlatform:
+      image: https://releases-rhcos.svc.ci.openshift.org/storage/releases/maipo/47.208/redhat-coreos-maipo-47.208-qemu.qcow2.gz
+    masterIPs: null
+    network:
+      if: tt0
+      ipRange: 192.168.126.0/24
+pullSecret: '#PULL_SECRET#'
+
+sshKey: |
+  #SSH_KEYS#
+
