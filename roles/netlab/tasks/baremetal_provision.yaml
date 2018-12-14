@@ -49,24 +49,6 @@
   retries: 20
   delay: 10
 
-- name: Deploy the rabbitmq manifests
-  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl apply -f {{ lookup('env', 'WORKSPACE') }}/edge-poc-netlab/third-party/rabbitmq/deploy/{{ item }}
-  with_items:
-    - rabbitmq_rbac.yaml
-    - rabbitmq_statefulsets.yaml
-
-- name: Give it some time to spin up cluster ...
-  pause:
-      minutes: 1
-
-- name: Wait for rabbit to be up
-  shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl get services --no-headers | grep 'rabbitmq' | wc -l
-  register: rabbit_result
-  until: rabbit_result.stdout|int > 0
-  retries: 20
-  delay: 10
-
-
 - name: Deploy the ironic operator
   git:
       repo: 'https://github.com/redhat-nfvpe/ironic-operator.git'
