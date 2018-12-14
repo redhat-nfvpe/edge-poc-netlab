@@ -25,7 +25,7 @@ platform:
     network:
       if: tt0
       ipRange: 192.168.126.0/24
-pullSecret: "#PULL_SECRET#"
+pullSecret: '#PULL_SECRET#'
 
 sshKey: ! "#SSH_KEYS#"
 
