@@ -1,0 +1,11 @@
+---
+- name: Extract disk from vm
+  shell: "virsh domblklist {{item}} --details | grep 'disk' | awk '{print $3}'"
+  register: vm_disk
+
+- name: debug
+  debug:
+    var: vm_disk
+
+- name: Snapshot vm
+  command: "virsh snapshot-create-as --domain {{ item }} {{ item }}  --diskspec {{ vm_disk.stdout }},file={{ lookup('env', 'SNAPSHOTS_FOLDER') }}/{{ item }}_disk.qcow2,snapshot=external --memspec file={{ lookup('env', 'SNAPSHOTS_FOLDER') }}/{{ item }}_mem.qcow2,snapshot=external --atomic"

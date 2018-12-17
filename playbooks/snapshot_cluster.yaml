@@ -1,0 +1,10 @@
+---
+- name: Snapshot vms
+  hosts: provision_host
+  gather_facts: yes
+
+  tasks:
+    - name: Snapshot all managed vms
+      import_role:
+        name: netlab
+        tasks_from: snapshot

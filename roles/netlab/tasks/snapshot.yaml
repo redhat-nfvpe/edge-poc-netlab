@@ -1,0 +1,10 @@
+---
+- name: Get all currently running virtual machines
+  virt:
+    command: list_vms
+    state: running
+  register: running_vms
+
+- name: Take snapshots on them
+  include_tasks: includes/snapshot_vm.yaml
+  loop: "{{ running_vms.list_vms }}"
