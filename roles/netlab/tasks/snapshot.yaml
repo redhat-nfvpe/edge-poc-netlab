@@ -8,3 +8,11 @@
 - name: Take snapshots on them
   include_tasks: includes/snapshot_vm.yaml
   loop: "{{ running_vms.list_vms }}"
+
+- name: Get all networks
+  command: "virsh net-list --name"
+  register: list_networks
+
+- name: Dump xml of networks
+  shell: "virsh net-dumpxml {{ item }} > {{ lookup('env', 'SNAPSHOTS_FOLDER') }}/network_{{ item }}.xml"
+  with_items: "{{ list_networks.stdout_lines }}"
