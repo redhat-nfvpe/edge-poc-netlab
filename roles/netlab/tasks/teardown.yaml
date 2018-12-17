@@ -11,6 +11,10 @@
     state: destroyed
   loop: "{{ running_vms.list_vms }}"
 
+- name: remove snapshot if exists
+  command: "virsh snapshot-delete {{ item }} --metadata {{ item }}"
+  ignore_errors: true
+
 - name: get all defined virtual machines
   virt:
     command: list_vms
