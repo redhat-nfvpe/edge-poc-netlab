@@ -51,7 +51,7 @@
 
 - name: Deploy the ironic operator
   git:
-      repo: 'https://github.com/redhat-nfvpe/ironic-operator.git'
+      repo: 'https://github.com/metalkube/ironic-operator.git'
       dest: "/{{ lookup('env', 'WORKSPACE') }}/ironic-operator"
 
 - name: Install operator files
