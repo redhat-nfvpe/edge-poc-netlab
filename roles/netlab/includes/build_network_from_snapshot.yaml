@@ -1,0 +1,27 @@
+---
+- name: get current networks
+  virt_net:
+    command: list_nets
+  register: networks
+
+- name: stop and remove the cluster network
+  virt_net:
+    name: cluster
+    command: "{{ item }}"
+  with_items:
+    - destroy
+    - undefine
+  when: "'default' in networks.list_nets"
+  ignore_errors: true
+
+- name: add the new default network definition
+  virt_net:
+    name: cluster
+    command: define
+    xml: "{{ lookup('url', lookup('env', 'SNAPSHOTS_PATH') + '/network_cluster.xml', split_lines=False) }}"
+
+- name: start the cluster network
+  virt_net:
+    name: cluster
+    command: start
+    autostart: yes

@@ -1,0 +1,38 @@
+---
+- name: provision the cloud virtual machine host
+  hosts: provision_host
+  gather_facts: yes
+  tags: provision_host
+
+  tasks:
+    - name: install dependencies
+      yum:
+        name:
+          - python-pip
+          - python-devel
+          - nfs-utils
+        state: latest
+
+    - name: install virtualbmc
+      pip:
+        name: virtualbmc
+
+    - name: build and start cloud virtual machine instances
+      import_role:
+        name: netlab
+        tasks_from: provision
+
+- name: provision the virtual machines
+  hosts: hosts
+  gather_facts: no
+  become: yes
+  tags: provision_vms_with_snapshot
+
+  tasks:
+    - name: build and start the network virtual machines
+      import_role:
+        name: netlab
+        tasks_from: build_with_snapshot
+      vars:
+        netlab_nodes_path: "{{ playbook_dir }}/../nodes"
+        netlab_files_path: "{{ playbook_dir }}/../files"
