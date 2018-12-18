@@ -27,12 +27,19 @@
   register: running_vms
 
 - name: build network node on host
-  include_tasks: includes/build_node.yaml
+  include_tasks: includes/build_node_from_snapshot.yaml
   with_dict: "{{ nodes }}"
+
+- name: get all currently stopped virtual machines
+  virt:
+    command: list_vms
+    state: shutdown
+  register: shutdown_vms
 
 - name: start nodes
   include_tasks: includes/start_node.yaml
   with_dict: "{{ nodes }}"
+  when: item.key in shutdown_vms.list_vms
 
 - name: shutdown and remove unknown network virtual machine
   include_tasks: includes/remove_vm.yaml

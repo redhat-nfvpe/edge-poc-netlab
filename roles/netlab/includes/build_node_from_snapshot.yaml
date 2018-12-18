@@ -1,0 +1,13 @@
+---
+- name: load node definition file
+  include_vars:
+    file: "{{ item.value }}"
+    name: node
+
+- name: set the node vm_name fact
+  set_fact:
+    vm_name: "{{ item.key }}"
+
+- name: build network virtual machine
+  include_tasks: build_vm_from_snapshot.yaml
+  when: node.enabled | default(True)

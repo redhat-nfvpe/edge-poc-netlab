@@ -1,0 +1,35 @@
+---
+- name: create image container on remote server
+  file:
+    path: "{{ netlab_virt_images_path }}/{{ node.vm_name }}"
+    state: directory
+
+- name: copy base image vm_disk to image container
+  copy:
+    src: "{{ netlab_files_path }}/{{ node.vm_disk }}"
+    dest: "{{ netlab_virt_images_path }}/{{ node.vm_name }}/{{ node.vm_disk }}"
+
+- name: create virtual machine base folder
+  file:
+    path: "{{ netlab_virt_vm_path }}/{{ vm_name }}"
+    state: directory
+
+- name: copy base image to virtual machine folder
+  copy:
+    src: "{{ netlab_virt_images_path }}/{{ vm_name }}/{{ node.vm_disk }}"
+    dest: "{{ netlab_virt_vm_path }}/{{ vm_name }}/{{ node.vm_disk }}"
+    remote_src: yes
+
+- name: copy base image vm_disk to virtual machine base folder
+  get_url:
+    url: "{{ lookup('env', 'SNAPSHOTS_PATH') + '/' + vm_name +'_disk.qcow2' }}"
+    dest: "{{ netlab_virt_vm_path }}/{{ vm_name }}/{{ vm_name }}.qcow2"
+  register: snapshot_result
+  ignore_errors: true
+
+- name: create virtual machine
+  virt:
+    name: "{{ vm_name }}"
+    command: define
+    xml: "{{ lookup('template', 'templates/{{ node.vm_type }}/vm.xml.j2') }}"
+  when: vm_name not in running_vms.list_vms and snapshot_result|changed
