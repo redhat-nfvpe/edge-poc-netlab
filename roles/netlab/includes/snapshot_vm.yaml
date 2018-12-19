@@ -12,7 +12,7 @@
       command: undefine
 
 - name: Snapshot vm
-  command: "virsh blockcopy {{ item }} {{ vm_disk }} {{ lookup('env', 'SNAPSHOTS_FOLDER') }}/{{ item }}_disk.qcow2 --wait --verbose --finish"
+  shell: "virsh blockcopy {{ item }} {{ vm_disk.stdout }} {{ lookup('env', 'SNAPSHOTS_FOLDER') }}/{{ item }}_disk.qcow2 --wait --verbose --finish"
 
 - name: After backup, define vm again
   virt:
