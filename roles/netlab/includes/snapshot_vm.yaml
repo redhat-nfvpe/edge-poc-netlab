@@ -3,8 +3,22 @@
   shell: "virsh domblklist {{item}} --details | grep 'disk' | awk '{print $3}'"
   register: vm_disk
 
+- name: Copy xml definition to temporary filepath
+  shell: "virsh dumpxml --inactive {{ item }} /tmp/{{ item }}_backup.xml"
+
+- name: Undefine the vm temporarily
+  virt:
+      name: "{{ item }}"
+      command: undefine
+
 - name: Snapshot vm
-  command: "virsh snapshot-create-as --domain {{ item }} {{ item }}  --no-metadata --atomic --disk-only --diskspec {{ vm_disk.stdout }},snapshot=external,file={{ lookup('env', 'SNAPSHOTS_FOLDER') }}/{{ item }}_disk.qcow2"
+  command: "virsh blockcopy {{ item }} {{ vm_disk }} {{ lookup('env', 'SNAPSHOTS_FOLDER') }}/{{ item }}_disk.qcow2 --wait --verbose --finish"
+
+- name: After backup, define vm again
+  virt:
+      name: "{{ item }}"
+      command: define
+      xml: "/tmp/{{ item }}_backup.xml"
 
 - name: Add the right permissions
   file:
