@@ -4,7 +4,7 @@
   register: vm_disk
 
 - name: Snapshot vm
-  command: "virsh snapshot-create-as --domain {{ item }} --name {{ item }}  --no-metadata --atomic --disk-only --diskspec {{ vm_disk.stdout }},file={{ lookup('env', 'SNAPSHOTS_FOLDER') }}/{{ item }}_disk.qcow2,snapshot=external"
+  command: "virsh snapshot-create-as --domain {{ item }} --name {{ item }}_disk  --no-metadata --atomic --disk-only --diskspec {{ vm_disk.stdout }},file={{ lookup('env', 'SNAPSHOTS_FOLDER') }}/{{ item }}_disk.qcow2,snapshot=external"
 
 - name: Add the right permissions
   file:
