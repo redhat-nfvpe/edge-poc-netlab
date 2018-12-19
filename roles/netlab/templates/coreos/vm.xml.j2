@@ -78,7 +78,7 @@
 
   </devices>
 
-  {% if node.ignition_name %}
+  {% if node.ignition_name and snapshot_path is not defined %}
   <qemu:commandline>
     <qemu:arg value="-fw_cfg"/>
     <qemu:arg value="name=opt/com.coreos/config,file={{ lookup('env', 'IGNITION_PATH') }}/{{ node.ignition_name }}"/>
