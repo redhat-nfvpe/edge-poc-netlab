@@ -39,6 +39,8 @@
       shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl get scc --no-headers | grep 'restricted' | wc -l
       register: scc_result
       until: scc_result.stdout|int > 0
+      delay: 60
+      retries: 10
 
     - name: Remove bootstrap node from cluster
       shell: KUBECONFIG={{ lookup('env', 'WORKSPACE') }}/kubeconfig kubectl delete node testcluster-bootstrap
