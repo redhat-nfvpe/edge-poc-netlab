@@ -24,11 +24,7 @@
 
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2'/>
-      {% if snapshot_path is defined %}
-      <source file="{{ snapshot_path }}" />
-      {% else %}
       <source file='{{ netlab_virt_vm_path }}/{{ vm_name }}/{{ node.vm_disk }}'/>
-      {% endif %}
       <target dev='hda' bus='ide'/>
       <address type='drive' controller='0' bus='0' target='0' unit='0'/>
     </disk>

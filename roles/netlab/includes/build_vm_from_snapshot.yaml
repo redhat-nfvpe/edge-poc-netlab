@@ -37,3 +37,7 @@
     command: define
     xml: "{{ lookup('template', 'templates/{{ node.vm_type }}/vm.xml.j2') }}"
   when: vm_name not in running_vms.list_vms and snapshot_result|changed
+
+- name: restore backup
+  command: "virsh blockcommit {{ vm_name }} {{ snapshot_path }} --active --pivot"
+  when: vm_name not in running_vms.list_vms and snapshot_result|changed
