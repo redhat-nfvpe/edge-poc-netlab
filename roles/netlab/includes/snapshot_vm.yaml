@@ -4,7 +4,7 @@
   register: vm_disk
 
 - name: Copy xml definition to temporary filepath
-  shell: "virsh dumpxml --inactive {{ item }} /tmp/{{ item }}_backup.xml"
+  shell: "virsh dumpxml --inactive {{ item }} > /tmp/{{ item }}_backup.xml"
 
 - name: Undefine the vm temporarily
   virt:
