@@ -12,5 +12,4 @@
       path: "{{ item }}"
   with_items:
       - "{{ lookup('env', 'SNAPSHOTS_FOLDER') }}/{{ item }}_disk.qcow2"
-      - "{{ lookup('env', 'SNAPSHOTS_FOLDER') }}/{{ item }}_mem.qcow2"
 
