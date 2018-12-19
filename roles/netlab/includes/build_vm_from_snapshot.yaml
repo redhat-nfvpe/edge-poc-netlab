@@ -27,6 +27,10 @@
   register: snapshot_result
   ignore_errors: true
 
+- name: set snapshot path
+  set_fact:
+      snapshot_path: "{{ netlab_virt_vm_path }}/{{ vm_name }}/{{ vm_name }}.qcow2"
+
 - name: create virtual machine
   virt:
     name: "{{ vm_name }}"
