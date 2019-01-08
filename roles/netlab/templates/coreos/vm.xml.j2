@@ -54,7 +54,7 @@
       <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>
     </interface>
 
-    {% if node.physical_bridge %}
+    {% if node.physical_bridge is defined %}
     <interface type='bridge'>
       <source bridge='{{ node.physical_bridge }}' />
     </interface>
