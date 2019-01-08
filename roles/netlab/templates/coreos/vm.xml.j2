@@ -54,6 +54,12 @@
       <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>
     </interface>
 
+    {% if node.physical_bridge %}
+    <interface type='bridge'>
+      <source bridge='{{ node.physical_bridge }}' />
+    </interface>
+    {% endif %}
+
     {% for link in node.connections | default([]) %}
     {% if link.type | default('udp') == 'udp' %}
     <interface type='udp'>
