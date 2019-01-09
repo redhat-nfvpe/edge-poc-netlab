@@ -14,5 +14,3 @@ ipmi:
   username: admin
   password: password
   port: 6231
-
-physical_bridge: br1
