@@ -88,6 +88,7 @@
   <qemu:commandline>
     <qemu:arg value="-fw_cfg"/>
     <qemu:arg value="name=opt/com.coreos/config,file={{ lookup('env', 'IGNITION_PATH') }}/{{ node.ignition_name }}"/>
+    <qemu:arg value="ip=eth0:dhcp" />
   </qemu:commandline>
   {% endif %}
 
