@@ -25,4 +25,4 @@ spec:
         args:
           - --v=4
           - --namespace=default
-          - --mysql-agent-image=iad.ocir.io/oracle/mysql-agent
+          - --mysql-agent-image=quay.io/yrobla/mysql-agent
