@@ -19,7 +19,7 @@ spec:
       containers:
       - name: mysql-operator-controller
         imagePullPolicy: Always
-        image: iad.ocir.io/oracle/mysql-operator:0.3.0
+        image: quay.io/yrobla/mysql-operator
         ports:
         - containerPort: 10254
         args:
