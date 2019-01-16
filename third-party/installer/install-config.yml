@@ -1,12 +1,12 @@
+apiVersion: v1beta1
 baseDomain: edge.testing
-clusterID: f54c073e-f9ec-4085-91ab-eea204cc0cdb
 machines:
 - name: master
   platform: {}
-  replicas: 1
+  replicas: 3
 - name: worker
   platform: {}
-  replicas: 1
+  replicas: 0
 metadata:
   creationTimestamp: null
   name: testcluster
@@ -20,12 +20,8 @@ networking:
 platform:
   libvirt:
     URI: qemu+tcp://192.168.122.1/system
-    defaultMachinePlatform:
-      image: https://releases-rhcos.svc.ci.openshift.org/storage/releases/maipo/47.208/redhat-coreos-maipo-47.208-qemu.qcow2.gz
-    masterIPs: null
     network:
       if: tt0
 pullSecret: '#PULL_SECRET#'
-
-sshKey: ! "#SSH_KEYS#"
-
+sshKey: |
+  #SSH_KEYS#
