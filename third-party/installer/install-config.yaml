@@ -6,7 +6,7 @@ machines:
   replicas: 3
 - name: worker
   platform: {}
-  replicas: 0
+  replicas: 1
 metadata:
   creationTimestamp: null
   name: testcluster
