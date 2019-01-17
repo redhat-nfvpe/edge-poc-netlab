@@ -1,24 +1,15 @@
 ---
 vm_name: server03
-vm_disk: empty_disk.qcow2
-vm_type: server
-vm_memory: 32
+vm_disk: rhcos-qemu.qcow2
+vm_type: coreos
+vm_memory: 20
 vnc_port: 5903
-
-connections:
-  - type: udp
-    s_port: 10031
-    d_port: 11003
-
-  - type: udp
-    s_port: 10032
-    d_port: 12003
 
 netlab_mgmt_source_bridge: br0
 mac_address: 52:54:00:cc:cc:03
-start: false
-
+start: true
+ignition_name: master.ign
 ipmi:
   username: admin
   password: password
-  port: 6232
+  port: 6233

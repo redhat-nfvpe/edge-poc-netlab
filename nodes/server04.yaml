@@ -1,19 +1,15 @@
 ---
 vm_name: server04
-vm_disk: empty_disk.qcow2
-vm_type: server
+vm_disk: rhcos-qemu.qcow2
+vm_type: coreos
 vm_memory: 20
-console_port: 2006
-
-connections:
-  - type: udp
-    s_port: 10041
-    d_port: 11004
-
-  - type: udp
-    s_port: 10042
-    d_port: 12004
+vnc_port: 5904
 
 netlab_mgmt_source_bridge: br0
 mac_address: 52:54:00:cc:cc:04
-start: false
+start: true
+ignition_name: master.ign
+ipmi:
+  username: admin
+  password: password
+  port: 6234

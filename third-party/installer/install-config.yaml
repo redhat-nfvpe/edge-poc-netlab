@@ -3,7 +3,7 @@ baseDomain: edge.testing
 machines:
 - name: master
   platform: {}
-  replicas: 1
+  replicas: 3
 - name: worker
   platform: {}
   replicas: 1
