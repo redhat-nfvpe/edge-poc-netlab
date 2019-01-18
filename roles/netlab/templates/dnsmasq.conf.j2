@@ -1,0 +1,11 @@
+port=53
+bind-interfaces
+domain={{ lookup('env', 'IGNITION_CLUSTER_DOMAIN' }}
+dhcp-range=192.168.126.3,192.168.126.254,12h
+dhcp-option=3,192.168.126.1
+dhcp-option=6,8.8.8.8,8.8.4.4
+dhcp-userclass=set:gpxe,"gPXE"
+dhcp-boot=tag:gpxe,/ipxe.pxe
+dhcp-match=set:ipxe,175
+dhcp-boot=tag:ipxe,http://192.168.126.2/boot.ipxe
+dhcp-boot=/undionly.kpxe
