@@ -1,6 +1,6 @@
 ---
 vm_name: server02
-vm_disk: rhcos-qemu.qcow2
+vm_disk: empty_disk.qcow2
 vm_type: coreos
 vm_memory: 20
 vnc_port: 5902
@@ -8,7 +8,6 @@ vnc_port: 5902
 netlab_mgmt_source_bridge: br0
 mac_address: 52:54:00:cc:cc:02
 start: false
-ignition_name: master.ign
 ipmi:
   username: admin
   password: password
