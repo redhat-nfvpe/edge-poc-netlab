@@ -109,3 +109,35 @@
     zone: public
     state: present
     permanent: true
+
+- name: Enable/start TFTP services
+  systemd:
+    name: "tftp"
+    state: started
+    enabled: True
+
+- name: TFP firewall rules
+  firewalld:
+    zone: public
+    service: "tftp"
+    permanent: true
+    state: enabled
+
+- name: Create tftp folder if not exists
+  file:
+      path: /var/lib/tftpboot
+      state: directory
+      mode: 0775
+
+- name: Create content inside tftpboot folder
+  file:
+      src: /usr/share/syslinux/pxelinux.0
+      dest: /var/lib/tftpboot/pxelinux.0
+      state: link
+
+- name: Generate bootstrap ipxe file
+  template:
+    src: templates/bootstrap.ipxe.j2
+    dest: /var/lib/tftpboot/bootstrap.ipxe
+    mode: 0644
+
