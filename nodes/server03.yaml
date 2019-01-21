@@ -7,7 +7,7 @@ vnc_port: 5903
 
 netlab_mgmt_source_bridge: br0
 mac_address: 52:54:00:cc:cc:03
-start: false
+start: true
 ipmi:
   username: admin
   password: password
