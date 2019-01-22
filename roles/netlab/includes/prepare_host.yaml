@@ -141,3 +141,8 @@
     dest: /var/lib/tftpboot/bootstrap.ipxe
     mode: 0644
 
+- name: Configure selinux policy for NGINX
+  sefcontext:
+    target: '/srv/nginx/images'
+    setype: httpd_sys_content_t
+    state: present
