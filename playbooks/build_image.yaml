@@ -12,17 +12,27 @@
           - python-devel
         state: latest
 
-- name: Register fact for home path
-  set_fact:
-      pubkey_path: "{{ lookup('env', 'HOME' }}/.ssh/id_rsa.pub"
+- name: Generate fact for pubkey path
+  hosts: provision_host
+  gather_facts: yes
+  tags: provision_host
+  tasks:
+    - name: Register fact for pubkey path
+      set_fact:
+        pubkey_path: "{{ lookup('env', 'HOME') }}/.ssh/id_rsa.pub"
 
 - name: generate ignition file with pubkey
+  hosts: provision_host
+  gather_facts: yes
+  tags: provision_host
   vars:
     core_pubkey: "{{ lookup('file', pubkey_path) }}"
-  template:
-    src: templates/ssh_key.ign.j2
-    dest: "{{ playbook_dir }}/../files/ssh_key.ign"
-    mode: 0644
+  tasks:
+    - name: Generate ignition file with pubkey
+      template:
+        src: templates/ssh_key.ign.j2
+        dest: "{{ playbook_dir }}/../files/ssh_key.ign"
+        mode: 0644
 
 - name: provision the virtual machines
   hosts: hosts
