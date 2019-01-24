@@ -160,3 +160,13 @@
           cd /tmp/coreos-dracut/build
           make clean && make x86_64
 
+    - name: Extract artifacts to workspace
+      fetch:
+          src: "{{ item }}"
+          dest: "{{ lookup('env', 'WORKSPACE') }}/"
+          flat: yes
+      with_items:
+          - /tmp/coreos-dracut/build/x86_64/coreos.iso
+          - /tmp/coreos-dracut/build/x86_64/isolinux/initrd.img
+          - /tmp/coreos-dracut/build/x86_64/isolinux/vmlinuz
+
