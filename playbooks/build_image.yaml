@@ -112,7 +112,8 @@
           cp /tmp/genisoimage/mkisofs /usr/bin/
 
     - name: Wait until isolinux is populated
-      path: /tmp/isolinux/isolinux.bin
+      wait_for:
+          path: /tmp/isolinux/isolinux.bin
 
     - name: And copy to the right path
       shell: |
