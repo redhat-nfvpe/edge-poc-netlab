@@ -62,6 +62,12 @@
           groups: build_host
           ansible_user: core
 
+    - name: Wait for VM to be available
+      wait_for:
+          port: 22
+          host: "{{ vm_ip.stdout }}"
+          delay: 10
+
 - name: Install dependencies to build VM
   hosts: build_host
   gather_facts: yes
@@ -126,7 +132,7 @@
 
     - name: Find vmlinuz file
       shell: |
-          find / -name vmlinuz*x86_64
+          find /boot -name vmlinuz*x86_64
       register: vmlinuz_file
 
     - name: And copy to boot directory
