@@ -137,7 +137,7 @@
 
     - name: And copy to boot directory
       shell: |
-          cp {{ vmlinuz_file }} /boot/
+          cp {{ vmlinuz_file.stdout }} /boot/
 
     - name: Download extra libraries
       get_url:
