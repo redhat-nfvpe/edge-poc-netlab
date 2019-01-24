@@ -60,6 +60,7 @@
       add_host:
           name: "{{ vm_ip.stdout }}"
           groups: build_host
+          ansible_user: core
 
 - name: Install dependencies to build VM
   hosts: build_host
