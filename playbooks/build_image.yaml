@@ -147,6 +147,7 @@
 
     - name: Extract extra libraries
       shell: |
+          cd /tmp
           rpm2cpio /tmp/libusal.rpm | cpio -idmv
 
     - name: Copy libraries to the right path
