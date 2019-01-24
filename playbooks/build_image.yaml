@@ -76,6 +76,7 @@
 
     - name: Enable /usr modification
       shell: rpm-ostree usroverlay
+      ignore_errors: true
 
     - name: Clone coreos-dracut project
       shell: |
