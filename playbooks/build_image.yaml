@@ -73,9 +73,26 @@
           policy: targeted
           state: permissive
 
+    - name: Enable /usr modification
+      shell: rpm-ostree usroverlay
+
     - name: Clone coreos-dracut project
       shell: |
           podman run -ti --rm -v {{ lookup('env', 'HOME') }}:/root -v /tmp:/git alpine/git clone https://github.com/yrobla/coreos-dracut.git
+
+    - name: Create needed directories
+      file:
+          path: "{{ item }}"
+          state: directory
+          mode: 0755
+      with_items:
+          - /tmp/isolinux
+          - /tmp/genisoimage
+          - /usr/lib/dracut/modules.d/90coreos
+
+    - name: Copy module to dracut
+      shell: |
+          cp -R /tmp/coreos-dracut/dracut-module/* /usr/lib/dracut/modules.d/90coreos/
 
     - name: Install syslinux
       shell: |
@@ -84,3 +101,48 @@
     - name: Install genisoimage
       shell: |
           podman run -v /tmp/genisoimage:/tmp/ -d --name genisoimage fedora:latest /bin/bash -c "dnf -y install genisoimage;cp /usr/bin/mkisofs /tmp/ ; sleep 300"
+
+    - name: Wait until genisoimage file is populated
+      wait_for:
+          path: /tmp/genisoimage/mkisofs
+
+    - name: And copy to the right path
+      shell: |
+          cp /tmp/genisoimage/mkisofs /usr/bin/
+
+    - name: Wait until isolinux is populated
+      path: /tmp/isolinux/isolinux.bin
+
+    - name: And copy to the right path
+      shell: |
+          cp -R /tmp/isolinux/* /usr/share/syslinux
+
+    - name: Find vmlinuz file
+      shell: |
+          find / -name vmlinuz*x86_64
+      register: vmlinuz_file
+
+    - name: And copy to boot directory
+      shell: |
+          cp {{ vmlinuz_file }} /boot/
+
+    - name: Download extra libraries
+      get_url:
+          url: https://rpmfind.net/linux/fedora/linux/releases/27/Everything/x86_64/os/Packages/l/libusal-1.1.11-37.fc27.x86_64.rpm
+          dest: /tmp/libusal.rpm
+          mode: 0644
+
+    - name: Extract extra libraries
+      shell: |
+          rpm2cpio /tmp/libusal.rpm | cpio -idmv
+
+    - name: Copy libraries to the right path
+      shell: |
+          cp /tmp/usr/lib64/libusal.so.0 /usr/lib64/
+          cp /tmp/usr/lib64/librols.so.0* /usr/lib64/
+
+    - name: Execute build
+      shell: |
+          cd /tmp/coreos-dracut/build
+          make clean && make x86_64
+
