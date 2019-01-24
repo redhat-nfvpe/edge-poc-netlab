@@ -36,4 +36,3 @@
       vars:
         netlab_nodes_path: "{{ playbook_dir }}/../nodes"
         netlab_files_path: "{{ playbook_dir }}/../files"
-        netlab_update_default_networks: False
