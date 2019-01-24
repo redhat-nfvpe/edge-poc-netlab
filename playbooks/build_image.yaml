@@ -25,8 +25,8 @@
   hosts: provision_host
   gather_facts: yes
   tags: provision_host
-   vars:
-     core_pubkey: "{{ lookup('file', pubkey_path) }}"
+  vars:
+    core_pubkey: "{{ lookup('file', pubkey_path) }}"
   template:
     src: templates/ssh_key.ign.j2
     dest: "{{ playbook_dir }}/../files/ssh_key.ign"
