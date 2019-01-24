@@ -60,3 +60,27 @@
       add_host:
           name: "{{ vm_ip.stdout }}"
           groups: build_host
+
+- name: Install dependencies to build VM
+  hosts: build_host
+  gather_facts: yes
+  become: yes
+  tags: build_image
+
+  tasks:
+    - name: disable selinux
+      selinux:
+          policy: targeted
+          state: permissive
+
+    - name: Clone coreos-dracut project
+      shell: |
+          podman run -ti --rm -v {{ lookup('env', 'HOME') }}:/root -v /tmp:/git alpine/git clone https://github.com/yrobla/coreos-dracut.git
+
+    - name: Install syslinux
+      shell: |
+          podman run -v /tmp/isolinux:/usr/share/syslinux/ -d --name isolinux fedora:latest /bin/bash -c "dnf -y install /usr/share/syslinux/isolinux.bin;sleep 300"
+
+    - name: Install genisoimage
+      shell: |
+          podman run -v /tmp/genisoimage:/tmp/ -d --name genisoimage fedora:latest /bin/bash -c "dnf -y install genisoimage;cp /usr/bin/mkisofs /tmp/ ; sleep 300"
