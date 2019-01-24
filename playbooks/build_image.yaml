@@ -92,6 +92,7 @@
           - /tmp/isolinux
           - /tmp/genisoimage
           - /usr/lib/dracut/modules.d/90coreos
+          - /usr/share/syslinux
 
     - name: Copy module to dracut
       shell: |
