@@ -101,10 +101,12 @@
     - name: Install syslinux
       shell: |
           podman run -v /tmp/isolinux:/usr/share/syslinux/ -d --name isolinux fedora:latest /bin/bash -c "dnf -y install /usr/share/syslinux/isolinux.bin;sleep 300"
+      ignore_errors: true
 
     - name: Install genisoimage
       shell: |
           podman run -v /tmp/genisoimage:/tmp/ -d --name genisoimage fedora:latest /bin/bash -c "dnf -y install genisoimage;cp /usr/bin/mkisofs /tmp/ ; sleep 300"
+      ignore_errors: true
 
     - name: Wait until genisoimage file is populated
       wait_for:
