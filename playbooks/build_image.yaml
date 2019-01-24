@@ -160,6 +160,15 @@
           cd /tmp/coreos-dracut/build
           make clean && make x86_64
 
+    - name: Add read permissions to generated images
+      file:
+          path: "{{ item }}"
+          mode: 0644
+      with_items:
+          - /tmp/coreos-dracut/build/x86_64/coreos.iso
+          - /tmp/coreos-dracut/build/x86_64/isolinux/initrd.img
+          - /tmp/coreos-dracut/build/x86_64/isolinux/vmlinuz
+
     - name: Extract artifacts to workspace
       fetch:
           src: "{{ item }}"
