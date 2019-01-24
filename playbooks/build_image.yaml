@@ -80,6 +80,7 @@
     - name: Clone coreos-dracut project
       shell: |
           podman run -ti --rm -v {{ lookup('env', 'HOME') }}:/root -v /tmp:/git alpine/git clone https://github.com/yrobla/coreos-dracut.git
+      ignore_errors: true
 
     - name: Create needed directories
       file:
