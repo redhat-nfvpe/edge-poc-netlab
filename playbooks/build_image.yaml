@@ -97,17 +97,13 @@
       with_items:
           - /tmp/isolinux
           - /tmp/genisoimage
+          - /tmp/iproute
           - /usr/lib/dracut/modules.d/90coreos
           - /usr/share/syslinux
 
     - name: Copy module to dracut
       shell: |
           cp -R /tmp/coreos-dracut/dracut-module/* /usr/lib/dracut/modules.d/90coreos/
-
-    - name: Install syslinux
-      shell: |
-          podman run -v /tmp/isolinux:/usr/share/syslinux/ -d --name isolinux fedora:latest /bin/bash -c "dnf -y install /usr/share/syslinux/isolinux.bin;sleep 300"
-      ignore_errors: true
 
     - name: Install genisoimage
       shell: |
@@ -122,6 +118,11 @@
       shell: |
           cp /tmp/genisoimage/mkisofs /usr/bin/
 
+    - name: Install syslinux
+      shell: |
+          podman run -v /tmp/isolinux:/usr/share/syslinux/ -d --name isolinux fedora:latest /bin/bash -c "dnf -y install /usr/share/syslinux/isolinux.bin;sleep 300"
+      ignore_errors: true
+
     - name: Wait until isolinux is populated
       wait_for:
           path: /tmp/isolinux/isolinux.bin
@@ -129,6 +130,19 @@
     - name: And copy to the right path
       shell: |
           cp -R /tmp/isolinux/* /usr/share/syslinux
+
+    - name: Install iproute new version
+      shell:
+          podman run -v /tmp/iproute:/tmp/ -d --name iproute fedora:27 /bin/bash -c "dnf -y install iproute;cp /usr/sbin/ip /tmp/ ; sleep 300"
+      ignore_errors: true
+
+    - name: Wait until ip binary is populated
+      wait_for:
+          path: /tmp/iproute/ip
+
+    - name: And copy to the right path
+      shell: |
+          cp /tmp/iproute/ip /sbin/ip
 
     - name: Find vmlinuz file
       shell: |
