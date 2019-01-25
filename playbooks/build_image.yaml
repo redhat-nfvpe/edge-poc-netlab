@@ -41,6 +41,15 @@
   tags: provision_vms
 
   tasks:
+    - name: stop and remove the cluster network
+      virt_net:
+        name: cluster
+        command: "{{ item }}"
+      with_items:
+        - destroy
+        - undefine
+      ignore_errors: true
+
     - name: build and start the network virtual machines
       import_role:
         name: netlab
