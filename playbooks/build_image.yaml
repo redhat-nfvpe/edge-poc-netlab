@@ -58,6 +58,10 @@
         netlab_nodes_path: "{{ playbook_dir }}/../nodes_image_build"
         netlab_files_path: "{{ playbook_dir }}/../files"
 
+    - name: Wait for some time to get ip populated
+      pause:
+          seconds: 30
+
     - name: Retrieve IP of generated VM
       shell: |
         for mac in `virsh domiflist server01 |grep -o -E "([0-9a-f]{2}:){5}([0-9a-f]{2})"` ; do
