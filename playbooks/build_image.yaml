@@ -139,11 +139,28 @@
       shell: |
           cp {{ vmlinuz_file.stdout }} /boot/
 
-    - name: Download extra libraries
+    - name: Download extra libraries for geniso
       get_url:
           url: https://rpmfind.net/linux/fedora/linux/releases/27/Everything/x86_64/os/Packages/l/libusal-1.1.11-37.fc27.x86_64.rpm
           dest: /tmp/libusal.rpm
           mode: 0644
+
+    - name: Download library needed for jq
+      get_url:
+          url: http://rpmfind.net/linux/fedora/linux/releases/27/Everything/x86_64/os/Packages/o/oniguruma-6.6.1-1.fc27.x86_64.rpm
+          dest: /tmp/libonig.rpm
+
+    - name: And download jq
+      get_url:
+          url: https://rpmfind.net/linux/fedora/linux/releases/27/Everything/x86_64/os/Packages/j/jq-1.5-8.fc27.x86_64.rpm
+          dest: /tmp/jq.rpm
+
+    - name: Install the packages
+      shell: |
+          rpm -i {{ item }}
+      with_items:
+          - /tmp/libonig.rpm
+          - /tmp/jq.rpm
 
     - name: Extract extra libraries
       shell: |
