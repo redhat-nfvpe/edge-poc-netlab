@@ -60,6 +60,14 @@
     src: /tmp/go.tar.gz
     dest: /usr/local/go
 
+- name: Install dep
+  shell: |
+      go get -u github.com/golang/dep/cmd/dep
+  environment:
+      GOPATH: "{{ lookup('env', 'HOME')/go }}"
+      GOBIN: "/usr/local/go/bin"
+      PATH: "{{ lookup('env', 'PATH') }}:/usr/local/go/bin"
+
 - name: Add k8S repository
   yum_repository:
     name: kubernetes

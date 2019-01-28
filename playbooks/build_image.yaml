@@ -12,6 +12,19 @@
           - python-devel
         state: latest
 
+    - name: Download ghw dependency
+      shell: |
+        go get github.com/jaypipes/ghw
+        cd {{ lookup('env', 'GOPATH') }}/src/github.com/jaypipes/ghw
+        dep ensure
+        cd cmd/ghwc
+        go build
+        cp ghwc {{ lookup('env', 'WORKSPACE')
+  environment:
+      GOPATH: "{{ lookup('env', 'HOME')/go }}"
+      GOBIN: "/usr/local/go/bin"
+      PATH: "{{ lookup('env', 'PATH') }}:/usr/local/go/bin"
+
 - name: Generate fact for pubkey path
   hosts: provision_host
   gather_facts: yes
