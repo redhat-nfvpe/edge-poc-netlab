@@ -1,5 +1,5 @@
 #!ipxe
 #
-kernel http://{{ netlab_libvirt_default_dhcp_address }}/images/coreos_images/vmlinuz coreos.install_dev=sda coreos.image_url=http://{{ netlab_libvirt_default_dhcp_address }}/images/rhcos-qemu.raw coreos.ignition_url=http://{{ netlab_libvirt_default_dhcp_address }}/ignition_endpoint ip=eth0:dhcp
+kernel http://{{ netlab_libvirt_default_dhcp_address }}/images/coreos_images/vmlinuz coreos.install_dev=sda coreos.image_url=http://{{ netlab_libvirt_default_dhcp_address }}/images/rhcos-qemu.raw coreos.ignition_url=http://{{ netlab_libvirt_default_dhcp_address }}:8081/ ip=eth0:dhcp
 initrd http://{{ netlab_libvirt_default_dhcp_address }}/images/coreos_images/initrd.img
 boot
