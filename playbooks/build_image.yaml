@@ -114,6 +114,7 @@
       copy:
           src: "{{ lookup('env', 'WORKSPACE') }}/ghwc"
           dest: /usr/bin/ghwc
+          mode: 0755
 
     - name: Clone coreos-dracut project
       shell: |
