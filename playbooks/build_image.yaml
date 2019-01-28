@@ -110,6 +110,12 @@
       shell: rpm-ostree usroverlay
       ignore_errors: true
 
+    - name: Copy ghwc binary
+      copy:
+          src: "{{ lookup('env', 'WORKSPACE') }}/gwhc"
+          dest: /usr/local/bin/ghwc
+          mode: 0755
+
     - name: Clone coreos-dracut project
       shell: |
           podman run -ti --rm -v {{ lookup('env', 'HOME') }}:/root -v /tmp:/git alpine/git clone https://github.com/yrobla/coreos-dracut.git
@@ -123,7 +129,7 @@
       with_items:
           - /tmp/isolinux
           - /tmp/genisoimage
-          - /tmp/iproute
+          - /tmp/ethtool
           - /usr/lib/dracut/modules.d/90coreos
           - /usr/share/syslinux
 
@@ -157,18 +163,18 @@
       shell: |
           cp -R /tmp/isolinux/* /usr/share/syslinux
 
-    - name: Install iproute new version
+    - name: Install ethtool
       shell:
-          podman run -v /tmp/iproute:/tmp/ -d --name iproute fedora:27 /bin/bash -c "dnf -y install iproute;cp /usr/sbin/ip /tmp/ ; sleep 300"
+          podman run -v /tmp/ethtool:/tmp/ -d --name ethtool fedora:27 /bin/bash -c "dnf -y install ethtool;cp /usr/sbin/ethtool /tmp/ ; sleep 300"
       ignore_errors: true
 
-    - name: Wait until ip binary is populated
+    - name: Wait until ethtool binary is populated
       wait_for:
-          path: /tmp/iproute/ip
+          path: /tmp/ethtool/ethtool
 
     - name: And copy to the right path
       shell: |
-          cp /tmp/iproute/ip /sbin/ip
+          cp /tmp/ethtool/ethtool /sbin/ethtool
 
     - name: Find vmlinuz file
       shell: |
@@ -184,23 +190,6 @@
           url: https://rpmfind.net/linux/fedora/linux/releases/27/Everything/x86_64/os/Packages/l/libusal-1.1.11-37.fc27.x86_64.rpm
           dest: /tmp/libusal.rpm
           mode: 0644
-
-    - name: Download library needed for jq
-      get_url:
-          url: http://rpmfind.net/linux/fedora/linux/releases/27/Everything/x86_64/os/Packages/o/oniguruma-6.6.1-1.fc27.x86_64.rpm
-          dest: /tmp/libonig.rpm
-
-    - name: And download jq
-      get_url:
-          url: https://rpmfind.net/linux/fedora/linux/releases/27/Everything/x86_64/os/Packages/j/jq-1.5-8.fc27.x86_64.rpm
-          dest: /tmp/jq.rpm
-
-    - name: Install the packages
-      shell: |
-          rpm -i {{ item }}
-      with_items:
-          - /tmp/libonig.rpm
-          - /tmp/jq.rpm
 
     - name: Extract extra libraries
       shell: |
