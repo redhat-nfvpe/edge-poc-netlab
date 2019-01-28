@@ -111,10 +111,10 @@
       ignore_errors: true
 
     - name: Copy ghwc binary
-      copy:
+      synchronize:
           src: "{{ lookup('env', 'WORKSPACE') }}/gwhc"
           dest: /usr/local/bin/ghwc
-          mode: 0755
+      delegate_to: provision_host
 
     - name: Clone coreos-dracut project
       shell: |
