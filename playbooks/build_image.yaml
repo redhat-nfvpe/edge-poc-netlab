@@ -19,7 +19,7 @@
         dep ensure
         cd cmd/ghwc
         go build
-        cp ghwc {{ lookup('env', 'WORKSPACE')
+        cp ghwc {{ lookup('env', 'WORKSPACE') }}/
   environment:
       GOPATH: "{{ lookup('env', 'HOME')/go }}"
       GOBIN: "/usr/local/go/bin"
