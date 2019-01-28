@@ -15,7 +15,7 @@
     - name: Download ghw dependency
       shell: |
         go get github.com/jaypipes/ghw
-        cd {{ lookup('env', 'GOPATH') }}/src/github.com/jaypipes/ghw
+        cd {{ lookup('env', 'HOME') }}/go/src/github.com/jaypipes/ghw
         dep ensure
         cd cmd/ghwc
         go build
