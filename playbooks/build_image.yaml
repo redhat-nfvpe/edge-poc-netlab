@@ -112,7 +112,7 @@
 
     - name: Copy ghwc binary
       copy:
-          src: "{{ lookup('env', 'WORKSPACE') }}/gwhc"
+          src: "{{ lookup('env', 'WORKSPACE') }}/ghwc"
           dest: /usr/local/bin/ghwc
 
     - name: Clone coreos-dracut project
