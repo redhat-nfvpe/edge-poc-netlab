@@ -21,7 +21,7 @@
         go build
         cp ghwc {{ lookup('env', 'WORKSPACE') }}/
   environment:
-      GOPATH: "{{ lookup('env', 'HOME')/go }}"
+      GOPATH: "{{ lookup('env', 'HOME') }}/go"
       GOBIN: "/usr/local/go/bin"
       PATH: "{{ lookup('env', 'PATH') }}:/usr/local/go/bin"
 
