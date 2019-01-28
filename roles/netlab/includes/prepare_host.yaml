@@ -64,7 +64,7 @@
   shell: |
       go get -u github.com/golang/dep/cmd/dep
   environment:
-      GOPATH: "{{ lookup('env', 'HOME')/go }}"
+      GOPATH: "{{ lookup('env', 'HOME') }}/go"
       GOBIN: "/usr/local/go/bin"
       PATH: "{{ lookup('env', 'PATH') }}:/usr/local/go/bin"
 
