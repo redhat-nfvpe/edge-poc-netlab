@@ -39,7 +39,22 @@ EOF
 }
 
 IGNITION_CONTENT=$(cat $1)
-ETCD_CONTENTS="[Unit]\nDescription=Start etcd pod\nBefore=bootkube.service\nConditionPathExists=!/opt/openshift/.bootetcd.done\n\n[Service]\nWorkingDirectory=/opt/openshift\nExecStart=/usr/local/bin/bootetcd.sh\n\nRestart=on-failure\nRestartSec=5s\n"
+
+read -r -d '' ETCD_CONTENTS <<EOF
+[Unit]
+Description=Start etcd pod
+Before=bootkube.service
+ConditionPathExists=!/opt/openshift/.bootetcd.done
+
+[Service]
+WorkingDirectory=/opt/openshift
+ExecStart=/usr/local/bin/bootetcd.sh
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+EOF
 
 read -r -d '' PODETCD_CONTENTS <<EOF
 #!/bin/bash
