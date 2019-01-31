@@ -2,10 +2,12 @@
 function add_ignition_unit() {
     local name=$1
     local contents=$2
+    local enabled=$3
     read -r -d '' unit <<EOF
 {
   "name": "${name}",
-  "contents": "${contents}"
+  "contents": "${contents}",
+  "enabled": ${enabled},
 }
 EOF
 
@@ -45,6 +47,6 @@ podman run -d  -p 2379:2379   -p 2380:2380 --net=host  --name etcd quay.io/coreo
 touch /opt/openshift/.bootetcd.done
 EOF
 
-add_ignition_unit "bootetcd.service" "${ETCD_CONTENTS}"
+add_ignition_unit "bootetcd.service" "${ETCD_CONTENTS}" "true"
 add_ignition_file "/usr/local/bin/bootetcd.sh" root 365 root "${PODETCD_CONTENTS}"
 echo "${IGNITION_CONTENT}" > $2
