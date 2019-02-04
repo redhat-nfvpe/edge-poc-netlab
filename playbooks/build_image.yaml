@@ -141,12 +141,14 @@
       get_url:
           url: https://raw.githubusercontent.com/yrobla/ignition-dracut/b09aeeb6c0cbde4ed497f8b8e14104de9207d9da/dracut/30ignition/ignition-generator
           dest: /usr/lib/dracut/modules.d/30ignition/ignition-generator
+          force: yes
           mode: 0755
 
     - name: Install a given patch 1
       get_url:
           url: https://raw.githubusercontent.com/yrobla/ignition-dracut/b09aeeb6c0cbde4ed497f8b8e14104de9207d9da/dracut/30ignition/ignition-setup.sh
           dest: /usr/lib/dracut/modules.d/30ignition/ignition-setup.sh
+          force: yes
           mode: 0755
 
     - name: Install genisoimage
