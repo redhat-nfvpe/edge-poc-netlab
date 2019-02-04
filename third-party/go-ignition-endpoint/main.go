@@ -90,9 +90,10 @@ func index() http.Handler {
             if err != nil {
                 panic(err)
             }
-            w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+
+            w.Header().Set("Content-Type", "application/json; charset=utf-8")
             w.WriteHeader(http.StatusOK)
-            fmt.Println(w, html)
+            fmt.Fprintln(w, string(html))
         }
 	})
 }
