@@ -79,7 +79,20 @@ func index() http.Handler {
             logger.Println("Post from website!", bodyString)
 		    w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	        w.WriteHeader(http.StatusOK)
-            fmt.Fprintln(w, "http://192.168.126.1/artifacts/stable_ignition/master.ign")
+
+            // retrieve url and return it
+            resp, err := http.Get("http://192.168.126.1/artifacts/stable_ignition/master.ign")
+            if err != nil {
+                panic(err)
+            }
+            defer resp.Body.Close()
+            html, err := ioutil.ReadAll(resp.Body)
+            if err != nil {
+                panic(err)
+            }
+            w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+            w.WriteHeader(http.StatusOK)
+            fmt.Println(w, html)
         }
 	})
 }
