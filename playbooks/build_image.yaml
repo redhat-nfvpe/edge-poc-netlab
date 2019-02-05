@@ -133,23 +133,13 @@
           - /usr/lib/dracut/modules.d/90coreos
           - /usr/share/syslinux
 
-    - name: Copy module to dracut
+    - name: Copy coreos module to dracut
       shell: |
           cp -R /tmp/coreos-dracut/dracut-module/* /usr/lib/dracut/modules.d/90coreos/
 
-    - name: Install given patch
-      get_url:
-          url: https://raw.githubusercontent.com/yrobla/ignition-dracut/b09aeeb6c0cbde4ed497f8b8e14104de9207d9da/dracut/30ignition/ignition-generator
-          dest: /usr/lib/dracut/modules.d/30ignition/ignition-generator
-          force: yes
-          mode: 0755
-
-    - name: Install a given patch 1
-      get_url:
-          url: https://raw.githubusercontent.com/yrobla/ignition-dracut/b09aeeb6c0cbde4ed497f8b8e14104de9207d9da/dracut/30ignition/ignition-setup.sh
-          dest: /usr/lib/dracut/modules.d/30ignition/ignition-setup.sh
-          force: yes
-          mode: 0755
+    - name: Copy introspection module to dracut
+      shell: |
+          cp -R /tmp/coreos-dracut/introspection-module/* /usr/lib/dracut/modules.90/90introspection/
 
     - name: Install genisoimage
       shell: |
