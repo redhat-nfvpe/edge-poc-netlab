@@ -140,7 +140,7 @@
 
     - name: Copy introspection module to dracut
       shell: |
-          cp -R /tmp/coreos-dracut/introspection-module/* /usr/lib/dracut/modules.90/90introspection/
+          cp -R /tmp/coreos-dracut/introspection-module/* /usr/lib/dracut/modules.d/90introspection/
 
     - name: Install genisoimage
       shell: |
