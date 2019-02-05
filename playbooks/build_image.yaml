@@ -131,6 +131,7 @@
           - /tmp/genisoimage
           - /tmp/ethtool
           - /usr/lib/dracut/modules.d/90coreos
+          - /usr/lib/dracut/modules.d/90introspection
           - /usr/share/syslinux
 
     - name: Copy coreos module to dracut
