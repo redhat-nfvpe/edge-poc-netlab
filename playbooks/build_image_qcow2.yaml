@@ -107,6 +107,8 @@
 - name: convert final image to raw
   hosts: provision_host
   gather_facts: yes
-  shell: |
-      qemu-img convert {{ lookup('env', 'WORKSPACE') }}/rhcos-qemu.qcow2 {{ lookup('env', 'WORKSPACE') }}/rhcos-qemu.raw
+  tasks:
+    - name: Execute qcow2 to raw conversion
+      shell: |
+        qemu-img convert {{ lookup('env', 'WORKSPACE') }}/rhcos-qemu.qcow2 {{ lookup('env', 'WORKSPACE') }}/rhcos-qemu.raw
 
