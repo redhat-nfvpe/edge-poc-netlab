@@ -2,84 +2,7 @@
 - name: Generate fact for pubkey path
   hosts: provision_host
   gather_facts: yes
-  tags: provision_host
   tasks:
-    - name: Register fact for pubkey path
-      set_fact:
-        pubkey_path: "{{ lookup('env', 'HOME') }}/.ssh/id_rsa.pub"
-
-- name: generate ignition file with pubkey
-  hosts: provision_host
-  gather_facts: yes
-  tags: provision_host
-  vars:
-    core_pubkey: "{{ lookup('file', pubkey_path) }}"
-  tasks:
-    - name: Generate ignition file with pubkey
-      template:
-        src: templates/ssh_key.ign.j2
-        dest: "{{ lookup('env', 'IGNITION_PATH') }}/ssh_key.ign"
-        mode: 0644
-
-- name: provision the virtual machines
-  hosts: hosts
-  gather_facts: no
-  become: yes
-  tags: provision_vms
-
-  tasks:
-    - name: stop and remove the cluster network
-      virt_net:
-        name: cluster
-        command: "{{ item }}"
-      with_items:
-        - destroy
-        - undefine
-      ignore_errors: true
-
-    - name: build and start the network virtual machines
-      import_role:
-        name: netlab
-        tasks_from: build
-      vars:
-        netlab_nodes_path: "{{ playbook_dir }}/../nodes_image_build"
-        netlab_files_path: "{{ playbook_dir }}/../files"
-
-    - name: Wait for some time to get ip populated
-      pause:
-          seconds: 30
-
-    - name: Retrieve IP of generated VM
-      shell: |
-        for mac in `virsh domiflist server01 |grep -o -E "([0-9a-f]{2}:){5}([0-9a-f]{2})"` ; do
-            arp -e |grep $mac  |grep -o -P "^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"
-        done
-      register: vm_ip
-
-    - name: Add new host to inventory
-      add_host:
-          name: "{{ vm_ip.stdout }}"
-          groups: build_host
-          ansible_user: core
-
-    - name: Wait for VM to be available
-      wait_for:
-          port: 22
-          host: "{{ vm_ip.stdout }}"
-          delay: 10
-
-- name: Install dependencies to build VM
-  hosts: build_host
-  gather_facts: yes
-  become: yes
-  tags: build_image
-
-  tasks:
-    - name: disable selinux
-      selinux:
-          policy: targeted
-          state: permissive
-
     - name: Create target directories
       file:
           path: "{{ item }}"
@@ -109,10 +32,6 @@
           dest: "{{ lookup('env', 'WORKSPACE') }}/rhcos-qemu.qcow2"
           flat: yes
 
-- name: convert final image to raw
-  hosts: provision_host
-  gather_facts: yes
-  tasks:
     - name: Execute qcow2 to raw conversion
       shell: |
         qemu-img convert {{ lookup('env', 'WORKSPACE') }}/rhcos-qemu.qcow2 {{ lookup('env', 'WORKSPACE') }}/rhcos-qemu.raw
