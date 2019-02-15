@@ -17,7 +17,7 @@
   tasks:
     - name: Generate ignition file with pubkey
       template:
-        src: ../templates/ssh_key.ign.j2
+        src: templates/ssh_key.ign.j2
         dest: "{{ lookup('env', 'IGNITION_PATH') }}/ssh_key.ign"
         mode: 0644
 
@@ -90,7 +90,7 @@
 
     - name: Copy file with coreos-assembler instructions
       copy:
-          src: "templates/cosa_build_rhcos_image"
+          src: templates/cosa_build_rhcos_image.sh.j2
           dest: /tmp/cosa_build/cosa_build_rhcos_image.sh
 
     - name: Install coreos-assembler and build images
