@@ -17,7 +17,7 @@
   tasks:
     - name: Generate ignition file with pubkey
       template:
-        src: templates/ssh_key.ign.j2
+        src: ../templates/ssh_key.ign.j2
         dest: "{{ lookup('env', 'IGNITION_PATH') }}/ssh_key.ign"
         mode: 0644
 
