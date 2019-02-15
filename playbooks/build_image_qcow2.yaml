@@ -1,15 +1,13 @@
 ---
-- name: Generate fact for pubkey path
+- name: Perform qcow2 image building
   hosts: provision_host
   gather_facts: yes
   tasks:
     - name: Create target directories
       file:
-          path: "{{ item }}"
+          path: /tmp/cosa_build
           state: directory
           mode: 0775
-      with_items:
-          - /tmp/cosa_build
 
     - name: Update certificates
       shell: |
@@ -36,4 +34,8 @@
     - name: Execute qcow2 to raw conversion
       shell: |
         qemu-img convert {{ lookup('env', 'WORKSPACE') }}/rhcos-qemu.qcow2 {{ lookup('env', 'WORKSPACE') }}/rhcos-qemu.raw
+
+    - name: Remove temporary directory
+      file: /tmp/cosa_build
+      state: absent
 
