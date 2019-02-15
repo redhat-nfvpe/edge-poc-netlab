@@ -36,6 +36,7 @@
         qemu-img convert {{ lookup('env', 'WORKSPACE') }}/rhcos-qemu.qcow2 {{ lookup('env', 'WORKSPACE') }}/rhcos-qemu.raw
 
     - name: Remove temporary directory
-      file: /tmp/cosa_build
-      state: absent
+      file:
+        path: /tmp/cosa_build
+        state: absent
 
