@@ -11,8 +11,9 @@
 
     - name: Update certificates
       shell: |
-        sudo curl -kL -o /etc/pki/ca-trust/source/anchors/Red_Hat_IT_Root_CA.crt https://password.corp.redhat.com/RH-IT-Root-CA.crt
-        sudo update-ca-trust
+        curl -kL -o /etc/pki/ca-trust/source/anchors/Red_Hat_IT_Root_CA.crt https://password.corp.redhat.com/RH-IT-Root-CA.crt
+        update-ca-trust
+      become: true
 
     - name: Copy file with coreos-assembler instructions
       copy:
