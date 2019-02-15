@@ -20,11 +20,12 @@
       copy:
           src: templates/cosa_build_rhcos_image.sh.j2
           dest: /tmp/cosa_build/cosa_build_rhcos_image.sh
+          mode: 0755
 
     - name: Install coreos-assembler and build images
       shell: |
           alias coreos-assembler="podman run --rm --net=host -ti --privileged --userns=host -v /tmp/cosa_build:/srv --workdir /srv docker-registry.upshift.redhat.com/redhat-coreos/coreos-assembler:stage"
-          coreos-assembler shell /srv/cosa_build_rhcos_image
+          coreos-assembler shell /srv/cosa_build_rhcos_image.sh
 
     - name: Extract image to workspace
       fetch:
