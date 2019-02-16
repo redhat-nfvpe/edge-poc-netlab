@@ -11,13 +11,13 @@ export INSTALLER_CHECKSUM_URL_OVERRIDE=http://download.devel.redhat.com/released
 # init the build and proceed
 cd /srv
 coreos-assembler init https://gitlab.cee.redhat.com/yroblamo/redhat-coreos.git maipo --force
-(cd src/config-git && make prep)
-
 pushd /srv/src/config
 git clone https://github.com/dustymabe/ignition-dracut
 pushd ignition-dracut
 git checkout dusty
 popd
 popd
+
+(cd src/config-git && make prep)
 coreos-assembler build
 
