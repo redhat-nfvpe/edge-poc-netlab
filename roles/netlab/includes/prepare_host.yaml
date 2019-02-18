@@ -85,7 +85,7 @@
   lineinfile:
     path: /etc/hosts
     regexp: '^192'
-    line: '192.168.126.3 testcluster-api.edge.testing'
+    line: '192.168.126.3 api.testcluster.edge.testing'
 
 - name: Add NFS server exports
   lineinfile:
