@@ -10,19 +10,19 @@
     <srv service='etcd-server-ssl' protocol='tcp' domain='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' target='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-etcd-1.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' port='2380' weight='10' />
     <srv service='etcd-server-ssl' protocol='tcp' domain='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' target='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-etcd-2.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' port='2380' weight='10' />
     <host ip='{{ netlab_libvirt_default_ip_bootstrap }}'>
-      <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-api</hostname>
+      <hostname>api.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}</hostname>
     </host>
     <host ip='{{ netlab_libvirt_default_ip_master0 }}'>
-      <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-api</hostname>
-      <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-etcd-0</hostname>
+      <hostname>api.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}</hostname>
+      <hostname>etcd-0.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}</hostname>
     </host>
     <host ip='{{ netlab_libvirt_default_ip_master1 }}'>
-      <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-api</hostname>
-      <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-etcd-1</hostname>
+      <hostname>api.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}</hostname>
+      <hostname>etcd-1.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}</hostname>
     </host>
     <host ip='{{ netlab_libvirt_default_ip_master2 }}'>
-      <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-api</hostname>
-      <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}-etcd-2</hostname>
+      <hostname>api.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}</hostname>
+      <hostname>etcd-2.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}</hostname>
     </host>
     <host ip='192.168.126.0'>
       <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}</hostname>
