@@ -29,8 +29,8 @@
     - name: Install coreos-assembler and build images
       shell: |
           pushd /tmp/cosa_build
-          #alias coreos-assembler="podman run --rm --net=host -ti --privileged --userns=host -v /tmp/cosa_build:/srv --workdir /srv docker-registry.upshift.redhat.com/redhat-coreos/coreos-assembler:stage"
-          alias coreos-assembler="podman run --rm --net=host -ti --privileged --userns=host -v /tmp/cosa_build:/srv --workdir /srv quay.io/coreos-assembler/coreos-assembler:latest"
+          alias coreos-assembler="podman run --rm --net=host -ti --privileged --userns=host -v /tmp/cosa_build:/srv --workdir /srv docker-registry.upshift.redhat.com/redhat-coreos/coreos-assembler:stage"
+          #alias coreos-assembler="podman run --rm --net=host -ti --privileged --userns=host -v /tmp/cosa_build:/srv --workdir /srv quay.io/coreos-assembler/coreos-assembler:latest"
           coreos-assembler shell /srv/cosa_build_rhcos_image.sh
           popd
 
