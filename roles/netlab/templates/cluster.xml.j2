@@ -4,28 +4,28 @@
     <port start='1024' end='65535'/>
   </forward>
   <bridge name='br0' stp='on' delay='0'/>
-  <domain name='{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' localOnly='yes' />
+  <domain name='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' localOnly='yes' />
   <dns>
     <srv service='etcd-server-ssl' protocol='tcp' domain='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' target='etcd-0.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' port='2380' weight='10' />
     <srv service='etcd-server-ssl' protocol='tcp' domain='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' target='etcd-1.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' port='2380' weight='10' />
     <srv service='etcd-server-ssl' protocol='tcp' domain='{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' target='etcd-2.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}' port='2380' weight='10' />
     <host ip='{{ netlab_libvirt_default_ip_bootstrap }}'>
-      <hostname>api.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}</hostname>
+      <hostname>api.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}</hostname>
     </host>
     <host ip='{{ netlab_libvirt_default_ip_master0 }}'>
-      <hostname>api.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}</hostname>
-      <hostname>etcd-0.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}</hostname>
+      <hostname>api.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}</hostname>
+      <hostname>etcd-0.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}</hostname>
     </host>
     <host ip='{{ netlab_libvirt_default_ip_master1 }}'>
-      <hostname>api.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}</hostname>
-      <hostname>etcd-1.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}</hostname>
+      <hostname>api.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}</hostname>
+      <hostname>etcd-1.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}</hostname>
     </host>
     <host ip='{{ netlab_libvirt_default_ip_master2 }}'>
-      <hostname>api.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}</hostname>
-      <hostname>etcd-2.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}</hostname>
+      <hostname>api.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}</hostname>
+      <hostname>etcd-2.{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}</hostname>
     </host>
     <host ip='192.168.126.0'>
-      <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}</hostname>
+      <hostname>{{ lookup('env', 'IGNITION_CLUSTER_NAME') }}.{{ lookup('env', 'IGNITION_CLUSTER_DOMAIN') }}</hostname>
     </host>
   </dns>
   <ip family="ipv4" address='{{ netlab_libvirt_default_dhcp_address }}' netmask='{{ netlab_libvirt_default_dhcp_mask }}'>
