@@ -1,26 +1,26 @@
 apiVersion: v1beta3
-baseDomain: "{{ aws_base_domain }}"
+baseDomain: "{{ settings.baseDomain }}"
 compute:
 - name: worker
   platform: {}
-  replicas: {{ num_workers }}
+  replicas: {{ settings.numWorkers }}
 controlPlane:
   name: master
   platform: {}
-  replicas: {{ num_masters }}
+  replicas: {{ settings.numMasters }}
 metadata:
   creationTimestamp: null
-  name: "{{ cluster_name }}"
+  name: "{{ settings.clusterName }}"
 networking:
   clusterNetworks:
-  - cidr: "{{ cluster_cidr }}"
-    hostSubnetLength: "{{ cluster_subnet_length }}"
-  machineCIDR: "{{ machine_cidr }}"
-  serviceCIDR: "{{ service_cidr }}"
-  type: "{{ sdn_type }}"
+  - cidr: "{{ settings.clusterCIDR }}"
+    hostSubnetLength: "{{ settings.clusterSubnetLength }}"
+  machineCIDR: "{{ settings.machineCIDR }}"
+  serviceCIDR: "{{ settings.serviceCIDR }}"
+  type: "{{ settings.SDNType }}"
 platform:
   aws:
-    region: "{{ aws_region }}"
-pullSecret: '{{ coreos_pull_secret }}'
+    region: "{{ settings.AWSRegion }}"
+pullSecret: '{{ settings.pullSecret }}'
 sshKey: |
-  {{ ssh_pubkey }}
+  {{ settings.SSHKey }}
