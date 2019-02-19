@@ -14,7 +14,7 @@ metadata:
 networking:
   clusterNetworks:
   - cidr: "{{ settings.clusterCIDR }}"
-    hostSubnetLength: "{{ settings.clusterSubnetLength }}"
+    hostSubnetLength: {{ settings.clusterSubnetLength }}
   machineCIDR: "{{ settings.machineCIDR }}"
   serviceCIDR: "{{ settings.serviceCIDR }}"
   type: "{{ settings.SDNType }}"
