@@ -43,3 +43,20 @@
     - name: Execute qcow2 to raw conversion
       shell: |
         qemu-img convert {{ lookup('env', 'WORKSPACE') }}/rhcos-qemu.qcow2 {{ lookup('env', 'WORKSPACE') }}/rhcos-qemu.raw
+
+    - name: Extract iso to workspace
+      fetch:
+          src: /tmp/cosa_build/builds/latest/redhat-coreos-maipo-47.iso
+          dest: "{{ lookup('env', 'WORKSPACE') }}/rhcos.iso"
+          flat: yes
+
+    - name: Extract iso and copy files
+      shell: |
+          TEMP_DIRECTORY=$(mktemp -d)
+          mount -o loop {{ lookup('env', 'WORKSPACE') }}/rhcos.iso ${TEMP_DIRECTORY}
+          cp ${TEMP_DIRECTORY}/vmlinuz {{ lookup('env', 'WORKSPACE') }}/vmlinuz
+          cp ${TEMP_DIRECTORY}/initramfs.img {{ lookup('env', 'WORKSPACE') }}/initrd.img
+          chmod a+r {{ lookup('env', 'WORKSPACE') }}/initrd.img
+
+
+
