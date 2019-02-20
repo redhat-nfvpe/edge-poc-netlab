@@ -1,5 +1,5 @@
 apiVersion: v1beta3
-baseDomain: "{{ settings.baseDomain }}"
+baseDomain: i{ settings.baseDomain }}
 compute:
 - name: worker
   platform: {}
@@ -10,17 +10,17 @@ controlPlane:
   replicas: {{ settings.numMasters }}
 metadata:
   creationTimestamp: null
-  name: "{{ settings.clusterName }}"
+  name: {{ settings.clusterName }}
 networking:
   clusterNetworks:
-  - cidr: "{{ settings.clusterCIDR }}"
+  - cidr: {{ settings.clusterCIDR }}
     hostSubnetLength: {{ settings.clusterSubnetLength }}
-  machineCIDR: "{{ settings.machineCIDR }}"
-  serviceCIDR: "{{ settings.serviceCIDR }}"
-  type: "{{ settings.SDNType }}"
+  machineCIDR: {{ settings.machineCIDR }}
+  serviceCIDR: {{ settings.serviceCIDR }}
+  type: {{ settings.SDNType }}
 platform:
   aws:
-    region: "{{ settings.AWSRegion }}"
+    region: {{ settings.AWSRegion }}
 pullSecret: '{{ settings.pullSecret }}'
 sshKey: |
   {{ settings.SSHKey }}
