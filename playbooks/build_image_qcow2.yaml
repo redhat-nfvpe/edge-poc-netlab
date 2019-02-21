@@ -43,6 +43,7 @@
     - name: Execute qcow2 to raw conversion
       shell: |
         qemu-img convert {{ lookup('env', 'WORKSPACE') }}/rhcos-qemu.qcow2 {{ lookup('env', 'WORKSPACE') }}/rhcos-qemu.raw
+        gzip -c {{ lookup('env', 'WORKSPACE') }}/rhcos-qemu.raw > {{ lookup('env', 'WORKSPACE') }}/rhcos-qemu.raw.gz
 
     - name: Extract iso to workspace
       fetch:
