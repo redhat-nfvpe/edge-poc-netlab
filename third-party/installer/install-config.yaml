@@ -1,12 +1,13 @@
-apiVersion: v1beta1
+apiVersion: v1beta3
 baseDomain: edge.testing
-machines:
-- name: master
-  platform: {}
-  replicas: 3
+compute:
 - name: worker
   platform: {}
   replicas: 1
+controlPlane:
+  name: master
+  platform: {}
+  replicas: 3
 metadata:
   creationTimestamp: null
   name: testcluster
