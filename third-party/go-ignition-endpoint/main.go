@@ -80,18 +80,8 @@ func index() http.Handler {
 		    w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	        w.WriteHeader(http.StatusOK)
 
-            // retrieve url and return it
-            resp, err := http.Get("http://192.168.126.1/artifacts/stable_ignition/master.ign")
-            if err != nil {
-                panic(err)
-            }
-            defer resp.Body.Close()
-            html, err := ioutil.ReadAll(resp.Body)
-            if err != nil {
-                panic(err)
-            }
-
-            w.Header().Set("Content-Type", "application/json; charset=utf-8")
+            html := "http://192.168.1.100/artifacts/stable_ignition/master.ign"
+            w.Header().Set("Content-Type", "application/text; charset=utf-8")
             w.WriteHeader(http.StatusOK)
             fmt.Fprintln(w, string(html))
         }
